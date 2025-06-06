@@ -1,0 +1,36 @@
+{
+  "usb": {
+    "simulationBehavior": "usb",
+    "visual": {
+      "builtIn": "usb",
+      "width": 100,
+      "height": 60,
+      "pinDistance": 20,
+      "pinLocations": [
+        {
+          "x": 0,
+          "y": 30
+        }
+      ]
+    },
+    "numberOfPins": 1,
+    "pinDefinitions": [
+      {
+        "target": "usb",
+        "style": "connector",
+        "orientation": "+Z"
+      }
+    ],
+    "instantiation": {
+      "kind": "singleton",
+      "fullyQualifiedName": "USB.start,USB.communicate",
+      "argumentRoles": []
+    },
+    "assembly": [
+      {
+        "part": true,
+        "pinIndices": [0]
+      }
+    ]
+  }
+}
