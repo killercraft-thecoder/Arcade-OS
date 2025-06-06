@@ -46,6 +46,4 @@ ARCADEOS is a modular operating system designed for the STM32F4 microcontroller 
 - USB is always initialized for programming and recovery.
 - GhostFAT enables drag-and-drop programming and file management.
 
-## License
-This project is for educational and prototyping purposes.
 
