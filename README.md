@@ -13,7 +13,7 @@ ARCADEOS is a modular operating system designed for the STM32F4 microcontroller 
 - **Screen API (partial):** Provides a font (`font5` from MakeCode Arcade) and some frame/image buffer structures and stubs (see `frame.cpp`, `frame.h`, `screenimage.cpp`, etc.), but does not support actual screen updates or hardware rendering yet. The API is a foundation for future display support, but not functional for real screen output.
 - **User-friendly programming:** Thanks to CODAL's GhostFAT, the device appears as a USB drive. Users can drag-and-drop files or programs onto the device, making programming and file management simple and accessible—no need for low-level flashing tools.
 - **CODAL API 2 integration:** ARCADEOS uses CODAL for hardware abstraction, event/fiber management, and device support, making it easy to port to other STM32 boards and leverage high-level APIs.
-- **SPI support:** SPI bus support is included (from MakeCode Arcade). PWM and I2C drivers are planned for future hardware features (e.g., speakers, sensors).
+- **SPI support:** SPI bus support is included (from MakeCode Arcade). PWM and I2C drivers are planned for future hardware features (e.g., speakers, sensors). (Also the Low-levle parts implment I2c drivers.)
 
 ## Flash Layout
 - **0x0000–0x2000:** Bootloader (must never be overwritten by OS or updates)
