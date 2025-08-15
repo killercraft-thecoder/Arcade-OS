@@ -1,0 +1,33 @@
+#ifndef PXTCONFIG_H
+#define PXTCONFIG_H
+
+// USB Power
+#define PIN_USB_POWER 93
+
+// Display Configuration
+#define DISPLAY_WIDTH 37
+#define DISPLAY_HEIGHT 38
+#define DISPLAY_CFG0 39
+#define DISPLAY_CFG1 40
+#define DISPLAY_CFG2 41
+#define DISPLAY_CFG3 42
+#define DISPLAY_DELAY 94
+#define PIN_DISPLAY_BL 44
+#define PIN_DISPLAY_CS 35
+#define PIN_DISPLAY_DC 36
+#define PIN_DISPLAY_MISO 33
+#define PIN_DISPLAY_MOSI 34
+#define PIN_DISPLAY_RST 43
+#define PIN_DISPLAY_SCK 32
+
+// FLASH CHIPS EXTERNAL
+#define PIN_FLASH_CS 9
+#define PIN_FLASH_MISO 10
+#define PIN_FLASH_MOSI 11
+#define PIN_FLASH_SCK 12
+#define FLASH_TOTAL_BYTES 204
+
+// SPEAKER
+#define PIN_SPEAKER_AMP
+
+#endif // PXTCONFIG_H
