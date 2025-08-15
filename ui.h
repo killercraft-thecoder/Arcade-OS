@@ -5,15 +5,31 @@
 #include <stdio.h>   // For vsnprintf (optional)
 #include <string.h>  // For strlen, strcpy
 #include <stdlib.h>  // For itoa if needed
+#include "image.cpp" // i should use a header file later.
+#include "font.cpp"
 
-#define UI_OKAY 0
-#define UI_NOT_OKAY 1
 
-// Replace this with your actual screen rendering function
-static void drawText(const char* text); // You must implement this elsewhere
+typedef struct {
+    Image_ SCREEN;
+} ScreenImage;
+
+/** The Screen of the Device */
+inline ScreenImage* screen = nullptr;
+inline int CURR_SCREEN_X = 0;
+
+static int drawText(const char* text) {
+    if (screen == nullptr) {
+        return DEVICE_HARDWARE_CONFIGURATION_ERROR;
+    }
+    if (screen->SCREEN == nullptr) {
+        return DEVICE_HARDWARE_CONFIGURATION_ERROR;
+    }
+    imagePrint(screen->SCREEN,text,0,CURR_SCREEN_X,1,font5)
+    return DEVICE_OK;
+}
 
 int printf(const char* format, ...) {
-    char buffer[512]; // Final output string
+    char buffer[80]; // Final output string
     va_list args;
     va_start(args, format);
 
@@ -52,8 +68,7 @@ int printf(const char* format, ...) {
     buffer[len] = '\0';
     va_end(args);
 
-    drawText(buffer); // Send to your screen renderer
-    return UI_OKAY;
+    return drawText(buffer);
 }
 
 #endif // UI_H

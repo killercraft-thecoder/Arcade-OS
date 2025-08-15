@@ -7,14 +7,6 @@
 namespace FML
 {
 
-    struct Folder
-    {
-        uint16_t folderID;       // Unique identifier for the folder
-        std::string folderName;  // Name of the folder
-        uint16_t parentFolderID; // Parent folder ID (0 for root)
-    };
-
-    std::unordered_map<std::string, Folder> folderRegistry; // Storage for folders
     std::unordered_map<std::string, char *> cachedFiles;    // Registry for cached files
 
     // Helper Function: Check if File Type Is Supported for Caching
@@ -89,48 +81,6 @@ namespace FML
         settings::_Mount();
     }
 
-    // Folder Management
-    bool CreateFolder(const std::string &folderName, uint32_t parentFolderID)
-    {
-        static uint32_t nextFolderID = 1; // Simple counter for folder IDs
-        uint32_t folderID = nextFolderID++;
-
-        uint8_t metadata[4]; // Adjusted for 16-bit folder IDs
-        memcpy(metadata, &folderID, sizeof(folderID));
-        memcpy(metadata + sizeof(folderID), &parentFolderID, sizeof(parentFolderID));
-
-        int result = settings::_set(mkString(folderName.c_str(), -1), mkBuffer(metadata, sizeof(metadata)));
-        if (result == 0)
-        {
-            folderRegistry[folderName] = {folderID, folderName, parentFolderID};
-            std::cout << "FML: Created folder '" << folderName << "' with ID: " << folderID << "\n";
-            return true;
-        }
-        else
-        {
-            std::cout << "FML: Failed to create folder '" << folderName << "'\n";
-            return false;
-        }
-    }
-
-    bool AttachFileToFolder(const std::string &filename, uint32_t folderID)
-    {
-        uint8_t metadata[4];
-        memcpy(metadata, &folderID, sizeof(folderID));
-
-        int result = settings::_set(mkString(filename.c_str(), -1), mkBuffer(metadata, sizeof(metadata)));
-        if (result == 0)
-        {
-            std::cout << "FML: Attached file '" << filename << "' to folder ID: " << folderID << "\n";
-            return true;
-        }
-        else
-        {
-            std::cout << "FML: Failed to attach file '" << filename << "' to folder ID: " << folderID << "\n";
-            return false;
-        }
-    }
-
     std::vector<std::string> GetFilesInFolder(uint32_t folderID)
     {
         std::vector<std::string> folderFiles;
@@ -155,30 +105,7 @@ namespace FML
         std::cout << "FML: Found " << folderFiles.size() << " files in folder ID: " << folderID << "\n";
         return folderFiles;
     }
-
-    bool DeleteFolder(uint16_t folderID)
-    {
-        auto files = GetFilesInFolder(folderID);
-
-        for (const auto &file : files)
-        {
-            settings::_remove(mkString(file.c_str(), -1));
-            std::cout << "FML: Deleted file '" << file << "' from folder ID: " << folderID << "\n";
-        }
-
-        std::string folderKey = "folder_" + std::to_string(folderID);
-        int result = settings::_remove(mkString(folderKey.c_str(), -1));
-        if (result == 0)
-        {
-            std::cout << "FML: Deleted folder ID: " << folderID << "\n";
-            return true;
-        }
-        else
-        {
-            std::cout << "FML: Failed to delete folder ID: " << folderID << "\n";
-            return false;
-        }
-    }
+    
     bool CreateCacheFile(const std::string &fileName, const uint8_t *data, size_t dataSize)
     {
         if (!fileName.ends_with(".cache"))

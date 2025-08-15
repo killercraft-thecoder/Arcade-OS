@@ -4,14 +4,32 @@
 
 #include <cstdint>
 #include <string>
+#include "platform_includes.h"
 
-typedef uint32_t uint;      // 32-bit unsigned integer
-typedef std::string string; // Standard string type
-typedef int64_t lint;       // 64-bit signed integer
-typedef uint64_t ulint;     // 64-bit unsigned integer
-typedef uint8_t byte;       // 8-bit unsigned integer
-typedef int32_t number;     // A number supported by the STM32F4 at hardware level
-typedef float nfloat;       // A float supported by the STM32F4's FPU
+typedef uint32_t uint;              // 32-bit unsigned integer
+typedef std::string string;         // Standard string type
+typedef uint8_t byte;               // 8-bit unsigned integer
+typedef PROCESSOR_WORD_TYPE number; // A number supported by the STM32F4 at hardware level
+#ifdef FPU_32
+typedef float nfloat; // A float supported by the MCU's FPU
+#define __FLOAT
+#endif
+#ifdef FPU_64
+typedef double nfloat; // A float supported by the MCU's FPU
+#define __FLOAT
+#endif
+#ifndef __FLOAT
+#define nfloat float // No FPU on MCU.
+#endif
+nfloat
+typedef int32_t i32;
+typedef int16_t i16;
+typedef int64_t i64;
+typedef int8_t i8;
+typedef uint64_t u64;
+typedef uint32_t u32;
+typedef uint16_t u16;
+typedef uint8_t u8;
 
 /**
  * @class FastDouble

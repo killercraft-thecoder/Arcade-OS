@@ -1,16 +1,15 @@
 #include "PM.h"
 #include "frame.h" // part of the screen API
-#include <thread>
-#include <chrono>
+#include "Timer.h"
 
 namespace PM
 {
 
-    void EnterSleepState(uint16_t durationInMinutes)
+    inline void EnterSleepState(uint16_t durationInMinutes)
     {
         StopDisplayUpdates(); // Freeze the display to save power
 
-        std::this_thread::sleep_for(std::chrono::minutes(durationInMinutes)); // Simulate the sleep duration
+        target_wait((durationInMinutes * 60) * 1000) // sleep.
 
         WakeUp(); // Automatically wake up after the sleep duration
     }
@@ -25,5 +24,3 @@ namespace PM
         screen::sleepmode = true
     }
 }
-
-// If you add any RAM allocation in PM.cpp, use Kernel::AllocateRAM(size) and Kernel::DeallocateRAM(pointer)

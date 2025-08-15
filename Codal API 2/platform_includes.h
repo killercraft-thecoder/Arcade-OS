@@ -28,4 +28,10 @@ void wait_us(uint32_t us);
 #define MBED_ERROR(msg) CODAL_ASSERT(0,0)
 #define MBED_WEAK __attribute__((weak))
 
+/** This IS Tweaked For the stm32 f4's FPU precision. */
+#define FPU_32
+#ifdef FPU_64
+#undef FPU_64
+#endif
+
 #endif

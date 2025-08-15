@@ -4,12 +4,6 @@
 #include <vector>
 #include <cmath> // for floor
 
-// Placeholder for `TextEffectState`, which would be defined elsewhere
-struct TextEffectState
-{
-    int xOffset; // Horizontal offset for text effects
-    int yOffset; // Vertical offset for text effects
-};
 
 // Font structure definition
 struct Font
@@ -57,13 +51,7 @@ const Font font5 = {
     1 // Default multiplier
 };
 
-// Define font12 (placeholder)
-const Font font12 = {
-    12, // Character width
-    12, // Character height
-    {}, // Data (add actual font data here when available)
-    1   // Default multiplier
-};
+#define NULLFONT nullptr
 
 // Function to get font based on text
 const Font &getFontForText(const std::string &text)
@@ -72,7 +60,7 @@ const Font &getFontForText(const std::string &text)
     {
         if (static_cast<uint32_t>(c) > 0x2000)
         {
-            return font12;
+            return NULLFONT;
         }
     }
     return font5;
@@ -108,12 +96,16 @@ bool imagePrintCenter(Image &img, const std::string &text, int y, int color = -1
 {
     if (screen::sleepmode)
     {
-        return
+        return false;
     }
 
     if (!font)
     {
         font = &getFontForText(text);
+    }
+
+    if (font == NULLFONT) {
+        return false; // Failure to Print.
     }
 
     int w = text.length() * font->charWidth;
@@ -134,8 +126,7 @@ void imagePrint(
     int y,
     int color = 1,
     const Font *font = nullptr,
-    const std::vector<TextEffectState> *offsets = nullptr)
-{
+) {
 
     x = std::floor(x);
     y = std::floor(y);
@@ -145,7 +136,7 @@ void imagePrint(
     }
     if (!font)
     {
-        font = &getFontForText(text);
+        font = font5;
     }
 
     int x0 = x;
@@ -175,12 +166,6 @@ void imagePrint(
     while (cp < text.length())
     {
         int xOffset = 0, yOffset = 0;
-
-        if (offsets && cp < offsets->size())
-        {
-            xOffset = (*offsets)[cp].xOffset;
-            yOffset = (*offsets)[cp].yOffset;
-        }
 
         char ch = text[cp++];
         if (ch == '\n')
