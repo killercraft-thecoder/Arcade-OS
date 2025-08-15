@@ -1,5 +1,5 @@
 # ARCADEOS
-
+(make sure to use the main-2 branch , which is hte latest branch  , becuase thats the only branch i can proplery direclty commit to. link to the second branch:)
 ARCADEOS is a modular operating system designed for the STM32F4 microcontroller family. It features a layered architecture with a Program Interface Layer (PIL), a File Management Layer (FML), a basic named file system implemented on flash storage, and a new kernel layer for core OS services.
 
 ## Features
@@ -50,3 +50,4 @@ ARCADEOS is a modular operating system designed for the STM32F4 microcontroller 
 ## Note
 
 Before Building for Hardware modify the `configkeys.h` and `pxtconfig.h` files to modify the configuration of the OS.
+
