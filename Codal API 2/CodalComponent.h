@@ -140,6 +140,7 @@ namespace codal
   class CodalComponent
   {
     static uint8_t configuration;
+    static uint16_t nextDynamicID;
 
   public:
     /**
@@ -159,6 +160,67 @@ namespace codal
      * @return uint16_t A new, unique component ID, until the ID space is exhausted.
      */
     static uint16_t generateDynamicID();
+    /**
+     * @function deallocateDynamicID
+     * @memberof CodalComponent
+     * @static
+     * @summary Safely deallocates the most recently allocated dynamic event ID.
+     *
+     * @description
+     * Rolls back the dynamic ID allocator by one step, making the last allocated ID
+     * available again. Includes a safety check to prevent underflow below the minimum
+     * dynamic ID threshold. Assumes a stack-like allocation pattern (LIFO).
+     *
+     * @returns {uint16_t} The current dynamic ID after deallocation. If the minimum
+     * threshold is reached, returns DEVICE_ID_DYNAMIC_MIN without decrementing.
+     *
+     * @example
+     * uint16_t id = CodalComponent::generateDynamicID();
+     * // ... use the ID ...
+     * CodalComponent::deallocateDynamicID(); // ID is now available again
+     */
+    static uint16_t CodalComponent::deallocateDynamicID();
+
+    /**
+     * @function dynamic_ids_left
+     * @memberof CodalComponent
+     * @static
+     * @inline
+     * @summary Returns the number of remaining dynamic event IDs available for allocation.
+     *
+     * @description
+     * Calculates how many dynamic event IDs are still available before reaching the
+     * upper limit defined by `DEVICE_ID_DYNAMIC_MAX`. This is useful for monitoring
+     * resource usage and preventing ID exhaustion in systems that allocate IDs dynamically.
+     *
+     * @returns {uint16_t} The number of dynamic IDs left to allocate.
+     *
+     * @example
+     * uint16_t remaining = CodalComponent::dynamic_ids_left();
+     * if (remaining < 10) {
+     *     // Consider freeing unused IDs or logging a warning
+     * }
+     */
+    static inline uint16_t CodalComponent::dynamic_ids_left();
+    /**
+     * @function dynamic_ids_used
+     * @memberof CodalComponent
+     * @static
+     * @inline
+     * @summary Returns the number of dynamic event IDs that have been allocated so far.
+     *
+     * @description
+     * Calculates how many dynamic event IDs have been consumed since the system started
+     * allocating from `DEVICE_ID_DYNAMIC_MIN`. This is useful for tracking resource usage
+     * and estimating how close the system is to exhausting its dynamic ID space.
+     *
+     * @returns {uint16_t} The number of dynamic IDs currently in use.
+     *
+     * @example
+     * uint16_t used = CodalComponent::dynamic_ids_used();
+     * printf("Dynamic IDs used: %d\n", used);
+     */
+    static inline uint16_t CodalComponent::dynamic_ids_used();
 
     /**
      * Adds the current CodalComponent instance to our array of components.
@@ -182,6 +244,7 @@ namespace codal
     {
       this->id = 0;
       this->status = 0;
+      this->nextDynamicID = DEVICE_ID_DYNAMIC_MIN;
 
       addComponent();
     }
