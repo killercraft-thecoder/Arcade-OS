@@ -76,6 +76,10 @@ DEALINGS IN THE SOFTWARE.
 #define CODAL_TIMESTAMP uint32_t
 #endif
 
+#ifndef CODAL_ALLOWS_MORE_CONSTANTS
+#define CODAL_ALLOWS_MORE_CONSTANTS 0
+#endif
+
 //
 // Defines the default minimum period (in uS) a hardware timer can measure without
 // risk of a race condition. Can be overridden in a target config.json.

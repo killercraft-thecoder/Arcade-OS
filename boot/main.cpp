@@ -1,12 +1,10 @@
 // ARCADEOS Bootloader/Main Entry
 #include "../os/declaration/OS.h"
-#include "../os/declaration/PIL.h"
 #include "../os/declaration/OSconfig.h"
-#include "../os/FML.cpp"
-#include "../os/PIL.cpp"
-#include "../core API/platform.h"
-#include "../core API/pxt.h"
-#include <iostream>
+#include "PIL.h"
+#include "platform.h"
+#include "pxt.h"
+#include "ui.h"
 
 // Platform/hardware initialization abstraction
 void board_init() {
