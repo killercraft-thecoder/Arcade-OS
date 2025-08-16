@@ -12,7 +12,7 @@
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
             "options": {
-                "cwd": "C:/msys64/mingw64/bin"
+                "cwd": "C:/msys64/mingw64/bin" // this is just so that intisense on my machine , knows where to look for the compiler. (purly for better intisense. not compling.)
             },
             "problemMatcher": [
                 "$gcc"
