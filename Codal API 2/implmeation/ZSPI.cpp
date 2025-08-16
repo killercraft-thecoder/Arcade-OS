@@ -26,7 +26,7 @@ DEALINGS IN THE SOFTWARE.
 #include "ZSPI.h"
 #include "ErrorNo.h"
 #include "CodalDmesg.h"
-#include "codal-core/inc/driver-models/Timer.h"
+#include "Timer.h"
 #include "MessageBus.h"
 #include "Event.h"
 #include "CodalFiber.h"
