@@ -3,6 +3,11 @@
 #include "Accelerometer.h"
 #include "CodalComponent.h"
 #include "Compass.h"
+#include "CodalDmesg.h"
+#include "Event.h"
+
+#define ENABLE_FALL_SPEED_DECTION 0 // switch to 1 to enable.
+#define DEVICE_ID_SPACE3D_FALL_REPORT 0x2002
 
 typedef struct
 {
@@ -46,6 +51,7 @@ private:
     codal::Accelerometer &accel;
     codal::Compass &comp;
     bool hasComp;
+    bool calibrated;
     SPACE_3D currentState;
     SPACE_CENTER centerState;
     int sampleRate;
@@ -56,6 +62,8 @@ private:
     float y;
     float vz;
     float z;
+    uint32_t last_time;
+    float velocity_z; // Esimated Fall Speed in m/s²
     void registerGestureHandlers()
     {
         messageBus.listen(accel.getId(), DEVICE_ID_GESTURE, this->onGestureDetected);
@@ -67,6 +75,7 @@ private:
         switch (gesture)
         {
         case ACCELEROMETER_EVT_SHAKE:
+        case ACCELEROMETER_EVT_2G:
         case ACCELEROMETER_EVT_3G:
         case ACCELEROMETER_EVT_6G:
         case ACCELEROMETER_EVT_8G:
@@ -87,11 +96,23 @@ private:
         case ACCELEROMETER_EVT_TILT_RIGHT:
         case ACCELEROMETER_EVT_FACE_UP:
         case ACCELEROMETER_EVT_FACE_DOWN:
-        case ACCELEROMETER_EVT_FREEFALL:
-
-            // Optional: handle orientation or motion events
             break;
+        case ACCELEROMETER_EVT_FREEFALL:
+#if defined(ENABLE_FALL_SPEED_DECTION)
+            uint32_t now = system_timer_current_time();
+            float dt = (now - this->last_time) / 1000.0f; // ms to seconds
+            this->last_time = now;
 
+            float az = accel.getZ() * 9.81f / 1000.0f; // convert milli-g to m/s²
+            float net_az = az - 9.81f;                 // remove gravity
+
+            this->velocity_z += net_az * dt;
+
+            DMESG("Fall speed: %.2f m/s\n", velocity_z);
+            Event e(DEVICE_ID_SPACE3D_FALL_REPORT,velocity_z);
+            e.fire();
+#endif
+            break;
         default:
             // Unknown or unhandled gesture
             break;
@@ -100,6 +121,11 @@ private:
     bool trackMotion = false; // Optional feature toggle
     float getYaw()
     {
+        if (this->hasComp)
+        {
+            // TODO: Maybe add handling for this case to make it more accurate?
+        }
+
         // Compute angle of lateral acceleration vector in degrees
         float angle = atan2(currentState.device_y, currentState.device_x) * 180.0f / M_PI;
         if (angle == nullptr)
@@ -120,12 +146,13 @@ private:
 public:
     // Constructor
     Space3D(codal::Accelerometer &accelerometer, int rate = 50)
-        : Component(DEVICE_ID_SPACE3D), accel(accelerometer), sampleRate(rate)
+        : Component(DEVICE_ID_SPACE3D), accel(accelerometer), sampleRate(rate), calibrated(false)
     {
         currentState = {0, 0, 0, 0, 0, 0};
         centerState = {0, 0, 0, 0, 0, 0};
         this->registerGestureHandlers();
         this->calibrateCenter();
+        this->calibrated = true;
         this->update();
         this->comp = NULL;
         this->hasComp = false;
@@ -138,6 +165,7 @@ public:
         centerState = {0, 0, 0, 0, 0, 0};
         this->registerGestureHandlers();
         this->calibrateCenter();
+        this->calibrated = true;
         this->update();
         this->comp = comp;
         this->hasComp = true;
@@ -159,8 +187,12 @@ public:
     }
 
     // Override from Component
-    virtual int update() override
+    virtual int update(bool ignorecal) override
     {
+        if (ignorecal == false && this->calibrated == false)
+        {
+            return DEVICE_CALIBRATION_IN_PROGRESS;
+        }
         currentState.device_x = accel.getX() - this->centerState.CENTER_X;
         currentState.device_y = accel.getY() - this->centerState.CENTER_Y;
         currentState.device_z = accel.getZ() - this->centerState.CENTER_Z;
@@ -233,18 +265,29 @@ public:
      */
     int recalibrate()
     {
+        this->calibrated = false;
         if (this->hasComp)
         {
-            this->comp.calibrate()
+            int code = this->comp.calibrate();
+            if (code == DEVICE_I2C_ERROR)
+            {
+                return DEVICE_I2C_ERROR;
+            }
+            if (code == DEVICE_CALIBRATION_REQUIRED)
+            {
+                return DEVICE_CALIBRATION_REQUIRED;
+            }
         }
         this->calibrateCenter();
+        this->calibrated = true;
         return DEVICE_OK;
     }
 
     // Calibration
     inline void calibrateCenter()
     {
-        this->update();
+
+        this->update(true);
         centerState.CENTER_X = currentState.device_x;
         centerState.CENTER_Y = currentState.device_y;
         centerState.CENTER_Z = currentState.device_z;
@@ -253,10 +296,14 @@ public:
         centerState.CENTER_YAW = currentState.device_yaw;
     }
 
-    // Optional: Set sample rate
-    inline void setSampleRate(int rate)
+    inline int setSampleRate(int rate)
     {
+        if (!this->calibrated)
+        {
+            return DEVICE_CALIBRATION_IN_PROGRESS;
+        }
         sampleRate = rate;
+        return DEVICE_OK;
     }
 
     inline int getSampleRate() const
