@@ -9,7 +9,7 @@
 #define ENABLE_FALL_SPEED_DECTION 0 // switch to 1 to enable.
 #define DEVICE_ID_SPACE3D_FALL_REPORT 0x2002
 
-typedef struct
+typedef struct __attribute__((packed))
 {
     int32_t device_x;
     int32_t device_y;
@@ -19,7 +19,7 @@ typedef struct
     int32_t device_yaw;   // Z
 } SPACE_3D;
 
-typedef struct
+typedef struct __attribute__((packed))
 {
     int32_t CENTER_X;
     int32_t CENTER_Y;
@@ -30,17 +30,11 @@ typedef struct
 } SPACE_CENTER;
 
 /**
- * A Sample of where the device is in space (thoguh yaw may cause Z to be really inaccurate.)
+ * A Sample of where the device is in space
  */
-typedef struct
-{
-    int32_t x;
-    int32_t y;
-    int32_t z;
-} DEVICE_POS_SAMPLE;
+typedef SPACE_3D DEVICE_POS_SAMPLE;
 
 inline codal::CoordinateSpace CORD_SPACE = new codal::CoordinateSpace(codal::CoordinateSystem::SIMPLE_CARTESIAN);
-inline codal::Accelerometer ACCEL = new codal::Accelerometer(CORD_SPACE);
 
 #define DEVICE_ID_SPACE3D 0x2001
 #define SPIN_THRESHOLD 100
@@ -109,7 +103,7 @@ private:
             this->velocity_z += net_az * dt;
 
             DMESG("Fall speed: %.2f m/s\n", velocity_z);
-            Event e(DEVICE_ID_SPACE3D_FALL_REPORT,velocity_z);
+            Event e(DEVICE_ID_SPACE3D_FALL_REPORT, velocity_z);
             e.fire();
 #endif
             break;
@@ -170,6 +164,35 @@ public:
         this->comp = comp;
         this->hasComp = true;
         this->comp.calibrate();
+    }
+
+    Space3D(codal::Compass &comp, int rate = 50)
+        : Component(DEVICE_ID_SPACE3D), sampleRate(rate)
+    {
+        this->accel = new codal::Accelerometer(CORD_SPACE);
+        currentState = {0, 0, 0, 0, 0, 0};
+        centerState = {0, 0, 0, 0, 0, 0};
+        this->registerGestureHandlers();
+        this->calibrateCenter();
+        this->calibrated = true;
+        this->update();
+        this->comp = comp;
+        this->hasComp = true;
+        this->comp.calibrate();
+    }
+
+    Space3D(int rate = 50)
+        : Component(DEVICE_ID_SPACE3D), sampleRate(rate)
+    {
+        this->accel = new codal::Accelerometer(CORD_SPACE);
+        currentState = {0, 0, 0, 0, 0, 0};
+        centerState = {0, 0, 0, 0, 0, 0};
+        this->registerGestureHandlers();
+        this->calibrateCenter();
+        this->calibrated = true;
+        this->update();
+        this->comp = NULL;
+        this->hasComp = false;
     }
 
     void motionTracking(bool enable)
@@ -309,5 +332,15 @@ public:
     inline int getSampleRate() const
     {
         return sampleRate;
+    }
+
+    inline DEVICE_POS_SAMPLE &getSample()
+    {
+        return &this->currentState;
+    }
+
+    ~Space3D() {
+       delete this->accel;
+       if (this->hasComp) delete this->comp;
     }
 };
