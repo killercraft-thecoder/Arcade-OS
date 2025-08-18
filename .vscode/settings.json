@@ -63,7 +63,8 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "pwmout_device.h": "c"
+        "pwmout_device.h": "c",
+        "stm32f4xx_hal.h": "c"
     },
     "editor.formatOnSave": true
 }
