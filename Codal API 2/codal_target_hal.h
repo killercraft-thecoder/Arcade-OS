@@ -27,6 +27,14 @@ DEALINGS IN THE SOFTWARE.
 
 #include "platform_includes.h"
 
+#if defined(__GNUC__)
+  #define NORETURN __attribute__((noreturn))
+#elif defined(_MSC_VER)
+  #define NORETURN __declspec(noreturn)
+#else
+  #define NORETURN [[noreturn]]
+#endif
+
 extern "C"
 {
   void target_enable_irq();

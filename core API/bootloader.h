@@ -1,14 +1,8 @@
 #pragma once
 #include "stm32f4xx.h"
+#include "codal_target_hal.h"
 
 namespace core {
-#if defined(__GNUC__)
-  #define NORETURN __attribute__((noreturn))
-#elif defined(_MSC_VER)
-  #define NORETURN __declspec(noreturn)
-#else
-  #define NORETURN [[noreturn]]
-#endif
 
 using entry_t = void (*)();
 
