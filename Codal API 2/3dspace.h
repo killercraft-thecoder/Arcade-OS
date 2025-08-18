@@ -39,7 +39,7 @@ inline codal::CoordinateSpace CORD_SPACE = new codal::CoordinateSpace(codal::Coo
 #define DEVICE_ID_SPACE3D 0x2001
 #define SPIN_THRESHOLD 100
 
-class Space3D : public codal::Component
+class Space3D : public codal::CodalComponent
 {
 private:
     codal::Accelerometer &accel;
@@ -56,6 +56,7 @@ private:
     float y;
     float vz;
     float z;
+    int16_t _id;
     uint32_t last_time;
     float velocity_z; // Esimated Fall Speed in m/s²
     void registerGestureHandlers()
@@ -138,12 +139,13 @@ private:
     }
 
 public:
-    // Constructor
-    Space3D(codal::Accelerometer &accelerometer, int rate = 50)
-        : Component(DEVICE_ID_SPACE3D), accel(accelerometer), sampleRate(rate), calibrated(false)
+    // rate is ms per tick , not hz.
+    Space3D(codal::Accelerometer &accelerometer, int rate = 25)
+        : codal::CodalComponent(DEVICE_ID_SPACE3D)(DEVICE_ID_SPACE3D), accel(accelerometer), sampleRate(rate), calibrated(false)
     {
         currentState = {0, 0, 0, 0, 0, 0};
         centerState = {0, 0, 0, 0, 0, 0};
+        this->setup();
         this->registerGestureHandlers();
         this->calibrateCenter();
         this->calibrated = true;
@@ -151,12 +153,13 @@ public:
         this->comp = NULL;
         this->hasComp = false;
     }
-
-    Space3D(codal::Accelerometer &accelerometer, codal::Compass &comp, int rate = 50)
-        : Component(DEVICE_ID_SPACE3D), accel(accelerometer), sampleRate(rate)
+ // rate is ms per tick , not hz.
+    Space3D(codal::Accelerometer &accelerometer, codal::Compass &comp, int rate = 25)
+        : codal::CodalComponent(DEVICE_ID_SPACE3D), accel(accelerometer), sampleRate(rate)
     {
         currentState = {0, 0, 0, 0, 0, 0};
         centerState = {0, 0, 0, 0, 0, 0};
+        this->setup();
         this->registerGestureHandlers();
         this->calibrateCenter();
         this->calibrated = true;
@@ -165,10 +168,11 @@ public:
         this->hasComp = true;
         this->comp.calibrate();
     }
-
-    Space3D(codal::Compass &comp, int rate = 50)
-        : Component(DEVICE_ID_SPACE3D), sampleRate(rate)
+ // rate is ms per tick , not hz.
+    Space3D(codal::Compass &comp, int rate = 25)
+        : codal::CodalComponent(DEVICE_ID_SPACE3D), sampleRate(rate)
     {
+        this->setup();
         this->accel = new codal::Accelerometer(CORD_SPACE);
         currentState = {0, 0, 0, 0, 0, 0};
         centerState = {0, 0, 0, 0, 0, 0};
@@ -180,13 +184,14 @@ public:
         this->hasComp = true;
         this->comp.calibrate();
     }
-
-    Space3D(int rate = 50)
-        : Component(DEVICE_ID_SPACE3D), sampleRate(rate)
+    // rate is ms per tick , not hz.
+    Space3D(int rate = 25)
+        : codal::Component(DEVICE_ID_SPACE3D), sampleRate(rate)
     {
         this->accel = new codal::Accelerometer(CORD_SPACE);
         currentState = {0, 0, 0, 0, 0, 0};
         centerState = {0, 0, 0, 0, 0, 0};
+        this->setup();
         this->registerGestureHandlers();
         this->calibrateCenter();
         this->calibrated = true;
@@ -206,6 +211,21 @@ public:
             this->vx = 0;
             this->vy = 0;
             this->vz = 0;
+        }
+    }
+    void setup() {
+        if (this->_id == nullptr) {
+            // means its not initalized yet
+            this->_id = 0;
+        }
+        system_timer_event_every(this->sampleRate, DEVICE_ID_SPACE3D, this->_id);
+        this->_id += 1; // make sure next time it is diffrent
+    }
+    void eventReceived(Event e) override
+    {
+        if (e.source == DEVICE_ID_SPACE3D && e.value == this->_id)
+        {
+            this->update();
         }
     }
 
@@ -326,14 +346,15 @@ public:
             return DEVICE_CALIBRATION_IN_PROGRESS;
         }
         sampleRate = rate;
+        this->setup();
         return DEVICE_OK;
     }
-
+    // rate is ms per tick , not hz.  , defualt rate is:40hz , or 25ms per tick.
     inline int getSampleRate() const
     {
         return sampleRate;
     }
-
+    // rate is ms per tick , not hz.
     inline DEVICE_POS_SAMPLE &getSample()
     {
         return &this->currentState;
