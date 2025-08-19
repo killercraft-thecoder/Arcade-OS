@@ -17,7 +17,7 @@
 - RAM management and garbage collection (Kernel + wrappers in `core API/controlgc` + implmeantion in `core API/gc.cpp`)
 - Robust USB support for programming and recovery
 - Dual-mode operation: Bootloader and OS (really purly becuase you dont wn
-at your bootloader erased , and it makes ti easier.)
+  at your bootloader erased , and it makes ti easier.)
 - Extensible architecture for drivers, input, and peripherals
 - **Screen API (complete):** Includes font5 from makecode arcade , and has makecode arcade style images (though using the screen is manual , so the software running on the os , will need to do the screen stuff, even though plenty of it is already done.)
 - **GhostFAT USB programming:** Appears as a USB drive for drag-and-drop programming—no flashing tools required
@@ -28,10 +28,10 @@ at your bootloader erased , and it makes ti easier.)
 
 ## Flash Layout
 
-| Region         | Address Range     | Description                              |
-|----------------|-------------------|------------------------------------------|
-| Bootloader     | `0x0000–0x2000`   | Must never be overwritten                |
-| Main Firmware  | `0x2000–...`      | OS, user code, and system logic          |
+| Region        | Address Range   | Description                     |
+| ------------- | --------------- | ------------------------------- |
+| Bootloader    | `0x0000–0x2000` | Must never be overwritten       |
+| Main Firmware | `0x2000–...`    | OS, user code, and system logic |
 
 Flash Layout is the Exact Same as the makecode arcade flash layout (apart from the well code section is diffrent.)
 
