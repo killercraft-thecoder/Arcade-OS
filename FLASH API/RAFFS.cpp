@@ -112,7 +112,7 @@ void FS::erasePages(uintptr_t addr, uint32_t len)
 void FS::oopsAndClear()
 {
     erasePages(baseAddr, bytes);
-    oops(); 
+    oops();
 }
 
 void FS::flushFlash()

@@ -122,7 +122,8 @@ namespace codal
         return 0;
     }
 
-    bool is_bootloader_region(uintptr_t address, size_t size) {
+    bool is_bootloader_region(uintptr_t address, size_t size)
+    {
         // Protect 0x0000–0x2000 (8KB)
         return (address < 0x2000) || (address + size > 0x0000 && address + size <= 0x2000);
     }

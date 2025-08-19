@@ -21,8 +21,7 @@ typedef double nfloat; // A float supported by the MCU's FPU
 #ifndef __FLOAT
 #define nfloat float // No FPU on MCU.
 #endif
-nfloat
-typedef int32_t i32;
+nfloat typedef int32_t i32;
 typedef int16_t i16;
 typedef int64_t i64;
 typedef int8_t i8;

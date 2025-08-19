@@ -121,16 +121,16 @@ namespace PIL
     {
         Kernel::RegisterTask(taskFunction, visible);
     }
-    /** 
+    /**
      * Run All Tasks
-    */
+     */
     void RunTasks()
     {
         Kernel::RunTasks();
     }
 
     // RAM Management (delegated to Kernel)
-    uint32_t* AllocateRAM(uint32_t size)
+    uint32_t *AllocateRAM(uint32_t size)
     {
         // Use kernel's allocation logic to respect OS_RAM_SIZE
         return Kernel::AllocateRAM(size);
@@ -140,20 +140,21 @@ namespace PIL
     {
         return Kernel::DeallocateRAM(pointer);
     }
-    /** 
+    /**
      * Trigger Garbage Collecter
-    */
+     */
     inline int TriggerGC()
     {
         return Kernel::TriggerGC();
     }
     /*
-    * Mount the File System
-    */
-    void Mount() {
+     * Mount the File System
+     */
+    void Mount()
+    {
         FML::Mount();
     }
-     
+
     // .bin File Management
     bool WriteToBinFile(const std::string &filename, const std::vector<uint8_t> &data, uint32_t appID)
     {
@@ -217,9 +218,9 @@ namespace PIL
     {
         PM::EnterSleepState(minutes);
     }
-    /** 
+    /**
      * Trigger GC and Dump Basic Infomation About the Heap.
-    */
+     */
     inline void GC()
     {
         control::gc();

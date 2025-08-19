@@ -7,9 +7,11 @@
 #include "indexedscreen.h"
 #include "arcadesound.h"
 
-namespace pxt {
+namespace pxt
+{
 
-class JDDisplay {
+  class JDDisplay
+  {
     jd_indexed_screen_start_update_t addr;
     SPI *spi;
     Pin *cs;
@@ -24,8 +26,8 @@ class JDDisplay {
     volatile bool stepWaiting;
     uint8_t displayServiceNum;
     uint8_t controlsStartServiceNum;
-    uint8_t controlsEndServiceNum;    
-    uint8_t soundServiceNum;    
+    uint8_t controlsEndServiceNum;
+    uint8_t soundServiceNum;
     uint16_t screenWidth, screenHeight;
     uint32_t buttonState;
     uint32_t avgFrameTime; // in us
@@ -46,16 +48,17 @@ class JDDisplay {
   public:
     uint8_t brightness;
     JDDisplay(SPI *spi, Pin *cs, Pin *flow);
-    void setAddrWindow(int x, int y, int w, int h) {
-        addr.x = x;
-        addr.y = y;
-        addr.width = w;
-        addr.height = h;
+    void setAddrWindow(int x, int y, int w, int h)
+    {
+      addr.x = x;
+      addr.y = y;
+      addr.width = w;
+      addr.height = h;
     }
     void waitForSendDone();
 
     int sendIndexedImage(const uint8_t *src, unsigned width, unsigned height, uint32_t *palette);
-};
+  };
 
 } // namespace pxt
 

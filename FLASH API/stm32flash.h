@@ -4,12 +4,14 @@
 #include "Flash.h"
 #include <cstdint>
 
-namespace codal {
+namespace codal
+{
     /**
      * Abstract base class for STM32 flash memory operations.
      * Implementations should provide chip-specific logic for page size, erase, and write.
      */
-    class STM32Flash : public Flash {
+    class STM32Flash : public Flash
+    {
     public:
         virtual int pageSize(uintptr_t address) override = 0;
         virtual int totalSize() override = 0;

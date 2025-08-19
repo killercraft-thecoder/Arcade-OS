@@ -2,19 +2,19 @@
 #ifndef _JACDAC_SPEC_INDEXED_SCREEN_H
 #define _JACDAC_SPEC_INDEXED_SCREEN_H 1
 
-#define JD_SERVICE_CLASS_INDEXED_SCREEN  0x16fa36e5
+#define JD_SERVICE_CLASS_INDEXED_SCREEN 0x16fa36e5
 
 /**
  * Sets the update window for subsequent `set_pixels` commands.
  */
 #define JD_INDEXED_SCREEN_CMD_START_UPDATE 0x81
-typedef struct jd_indexed_screen_start_update {
-    uint16_t x; // px
-    uint16_t y; // px
-    uint16_t width; // px
+typedef struct jd_indexed_screen_start_update
+{
+    uint16_t x;      // px
+    uint16_t y;      // px
+    uint16_t width;  // px
     uint16_t height; // px
 } jd_indexed_screen_start_update_t;
-
 
 /**
  * Argument: pixels bytes. Set pixels in current window, according to current palette.
@@ -34,13 +34,13 @@ typedef struct jd_indexed_screen_start_update {
  * This register may be write-only.
  */
 #define JD_INDEXED_SCREEN_REG_PALETTE 0x80
-typedef struct jd_indexed_screen_palette {
+typedef struct jd_indexed_screen_palette
+{
     uint8_t blue;
     uint8_t green;
     uint8_t red;
     uint8_t padding;
 } jd_indexed_screen_palette_t;
-
 
 /**
  * Constant bit uint8_t. Determines the number of palette entries.

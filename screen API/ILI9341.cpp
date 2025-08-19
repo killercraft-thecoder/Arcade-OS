@@ -55,8 +55,7 @@
 
 #define ILI9341_GMCTRP1 0xE0 ///< Positive Gamma Correction
 #define ILI9341_GMCTRN1 0xE1 ///< Negative Gamma Correction
-//#define ILI9341_PWCTR6     0xFC
-
+// #define ILI9341_PWCTR6     0xFC
 
 // clang-format off
 static const uint8_t initcmd[] = {
@@ -148,13 +147,13 @@ static const uint8_t initcmd[] = {
 namespace codal
 {
 
-ILI9341::ILI9341(ScreenIO &io, Pin &cs, Pin &dc) : ST7735(io, cs, dc)
-{
+  ILI9341::ILI9341(ScreenIO &io, Pin &cs, Pin &dc) : ST7735(io, cs, dc)
+  {
     double16 = true;
-}
+  }
 
-int ILI9341::init()
-{
+  int ILI9341::init()
+  {
     endCS();
     setData();
 
@@ -162,6 +161,6 @@ int ILI9341::init()
     sendCmdSeq(initcmd);
 
     return DEVICE_OK;
-}
+  }
 
 } // namespace codal

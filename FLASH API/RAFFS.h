@@ -5,7 +5,6 @@
 
 typedef unsigned int uintptr_t;
 
-
 namespace pxt
 {
     namespace raffs

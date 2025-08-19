@@ -15,7 +15,8 @@
 #define SW_SQUARE_CYCLE_32 17
 #define SW_SQUARE_CYCLE_64 18
 
-struct SoundInstruction {
+struct SoundInstruction
+{
     uint8_t soundWave;
     uint8_t flags;
     uint16_t frequency;    // Hz
@@ -29,106 +30,117 @@ struct SoundInstruction {
 #define CODAL 1
 #endif
 
-namespace music {
+namespace music
+{
 
 #define MAX_SOUNDS 8
 
-STATIC_ASSERT((1 << (16 - OUTPUT_BITS)) > MAX_SOUNDS);
+    STATIC_ASSERT((1 << (16 - OUTPUT_BITS)) > MAX_SOUNDS);
 
-enum class SoundState : uint8_t {
-    Waiting, //
-    Playing, //
-    Done     //
-};
+    enum class SoundState : uint8_t
+    {
+        Waiting, //
+        Playing, //
+        Done     //
+    };
 
-struct WaitingSound {
-    uint32_t startSampleNo;
-    SoundState state;
-    WaitingSound *next;
-    Buffer instructions;
-};
+    struct WaitingSound
+    {
+        uint32_t startSampleNo;
+        SoundState state;
+        WaitingSound *next;
+        Buffer instructions;
+    };
 
-struct PlayingSound {
-    uint32_t startSampleNo;
-    uint32_t samplesLeftInCurr;
-    uint32_t tonePosition;
-    int32_t prevVolume;
-    uint32_t prevToneStep;
-    int32_t prevToneDelta;
-    uint32_t generatorState;
-    WaitingSound *sound;
-    SoundInstruction *currInstr, *instrEnd;
-};
+    struct PlayingSound
+    {
+        uint32_t startSampleNo;
+        uint32_t samplesLeftInCurr;
+        uint32_t tonePosition;
+        int32_t prevVolume;
+        uint32_t prevToneStep;
+        int32_t prevToneDelta;
+        uint32_t generatorState;
+        WaitingSound *sound;
+        SoundInstruction *currInstr, *instrEnd;
+    };
 
-class WSynthesizer
+    class WSynthesizer
 #ifdef CODAL
-    : public DataSource
+        : public DataSource
 #endif
-{
-  public:
+    {
+    public:
 #ifdef CODAL
-    DataSink *upstream;
+        DataSink *upstream;
 #else
-    void *upstream;
+        void *upstream;
 #endif
-    uint32_t currSample; // after 25h of playing we might get a glitch
-    int32_t sampleRate;  // eg 44100
-    PlayingSound playingSounds[MAX_SOUNDS];
-    WaitingSound *waiting;
-    bool active;
+        uint32_t currSample; // after 25h of playing we might get a glitch
+        int32_t sampleRate;  // eg 44100
+        PlayingSound playingSounds[MAX_SOUNDS];
+        WaitingSound *waiting;
+        bool active;
 
-    SoundOutput out;
+        SoundOutput out;
 
-    int fillSamples(int16_t *dst, int numsamples);
-    int updateQueues();
+        int fillSamples(int16_t *dst, int numsamples);
+        int updateQueues();
 
-    WSynthesizer();
-    virtual ~WSynthesizer() {}
+        WSynthesizer();
+        virtual ~WSynthesizer() {}
 
-    void pokeUpstream() {
+        void pokeUpstream()
+        {
 #ifdef CODAL
-        if (upstream) {
-            upstream->pullRequest();
-        }
+            if (upstream)
+            {
+                upstream->pullRequest();
+            }
 #endif
-    }
+        }
 
-    void poke() {
-        if (!active) {
-            active = true;
+        void poke()
+        {
+            if (!active)
+            {
+                active = true;
+                pokeUpstream();
+            }
+        }
+
+#ifdef CODAL
+        virtual ManagedBuffer pull()
+        {
+            if (!upstream)
+                return ManagedBuffer();
+            ManagedBuffer data(512);
+            auto dp = (int16_t *)data.getBytes();
+            auto sz = 512 / 2;
+            int r = fillSamples(dp, sz);
+#if defined(NRF52_SERIES)
+            int mul = out.dac.getSampleRange();
+#endif
+            while (sz--)
+            {
+#if defined(NRF52_SERIES)
+                *dp = ((-*dp + (1 << (OUTPUT_BITS - 1))) * mul) >> OUTPUT_BITS;
+#else
+                *dp += 1 << (OUTPUT_BITS - 1);
+#endif
+                dp++;
+            }
+            if (!r)
+            {
+                active = false;
+                // return empty - nothing left to play
+                return ManagedBuffer();
+            }
             pokeUpstream();
+            return data;
         }
-    }
-
-#ifdef CODAL
-    virtual ManagedBuffer pull() {
-        if (!upstream)
-            return ManagedBuffer();
-        ManagedBuffer data(512);
-        auto dp = (int16_t *)data.getBytes();
-        auto sz = 512 / 2;
-        int r = fillSamples(dp, sz);
-#if defined(NRF52_SERIES)
-        int mul = out.dac.getSampleRange();
+        virtual void connect(DataSink &sink) { upstream = &sink; }
 #endif
-        while (sz--) {
-#if defined(NRF52_SERIES)
-            *dp = ((-*dp + (1 << (OUTPUT_BITS - 1))) * mul) >> OUTPUT_BITS;
-#else
-            *dp += 1 << (OUTPUT_BITS - 1);
-#endif
-            dp++;
-        }
-        if (!r) {
-            active = false;
-            // return empty - nothing left to play
-            return ManagedBuffer();
-        }
-        pokeUpstream();
-        return data;
-    }
-    virtual void connect(DataSink &sink) { upstream = &sink; }
-#endif
-};
+    };
 
 } // namespace music

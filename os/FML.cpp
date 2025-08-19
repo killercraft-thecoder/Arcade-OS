@@ -7,7 +7,7 @@
 namespace FML
 {
 
-    std::unordered_map<std::string, char *> cachedFiles;    // Registry for cached files
+    std::unordered_map<std::string, char *> cachedFiles; // Registry for cached files
 
     // Helper Function: Check if File Type Is Supported for Caching
     bool isSupportedForCaching(const std::string &fileName)
@@ -105,7 +105,7 @@ namespace FML
         std::cout << "FML: Found " << folderFiles.size() << " files in folder ID: " << folderID << "\n";
         return folderFiles;
     }
-    
+
     bool CreateCacheFile(const std::string &fileName, const uint8_t *data, size_t dataSize)
     {
         if (!fileName.ends_with(".cache"))

@@ -2,7 +2,7 @@
 #ifndef _JACDAC_SPEC_ARCADE_GAMEPAD_H
 #define _JACDAC_SPEC_ARCADE_GAMEPAD_H 1
 
-#define JD_SERVICE_CLASS_ARCADE_GAMEPAD  0x1deaa06e
+#define JD_SERVICE_CLASS_ARCADE_GAMEPAD 0x1deaa06e
 
 // enum Button (uint8_t)
 #define JD_ARCADE_GAMEPAD_BUTTON_LEFT 0x1
@@ -21,20 +21,20 @@
  * `pressure` should be `0xff` for digital buttons, and proportional for analog ones.
  */
 #define JD_ARCADE_GAMEPAD_REG_BUTTONS JD_REG_READING
-typedef struct jd_arcade_gamepad_buttons {
-    uint8_t button;  // Button
-    uint8_t pressure;  // ratio u0.8
+typedef struct jd_arcade_gamepad_buttons
+{
+    uint8_t button;   // Button
+    uint8_t pressure; // ratio u0.8
 } jd_arcade_gamepad_buttons_t;
-
 
 /**
  * Constant. Indicates number of players supported and which buttons are present on the controller.
  */
 #define JD_ARCADE_GAMEPAD_REG_AVAILABLE_BUTTONS 0x180
-typedef struct jd_arcade_gamepad_available_buttons {
-    uint8_t button[0];  // Button
+typedef struct jd_arcade_gamepad_available_buttons
+{
+    uint8_t button[0]; // Button
 } jd_arcade_gamepad_available_buttons_t;
-
 
 /**
  * Argument: button Button (uint8_t). Emitted when button goes from inactive to active.

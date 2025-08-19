@@ -2,7 +2,7 @@
 #ifndef _JACDAC_SPEC_ARCADE_SOUND_H
 #define _JACDAC_SPEC_ARCADE_SOUND_H 1
 
-#define JD_SERVICE_CLASS_ARCADE_SOUND  0x1fc63606
+#define JD_SERVICE_CLASS_ARCADE_SOUND 0x1fc63606
 
 /**
  * Argument: samples bytes. Play samples, which are single channel, signed 16-bit little endian values.

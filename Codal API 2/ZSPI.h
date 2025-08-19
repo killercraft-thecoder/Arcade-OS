@@ -26,7 +26,7 @@ DEALINGS IN THE SOFTWARE.
 #define CODAL_Z_SPI_H
 
 #include "CodalConfig.h"
-#include "codal-core/inc/driver-models/SPI.h"
+#include "SPI.h"
 #include "Pin.h"
 
 namespace codal

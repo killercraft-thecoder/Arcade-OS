@@ -44,8 +44,8 @@ using namespace codal;
 
 CodalUSB *CodalUSB::usbInstance = NULL;
 
-// #define LOG DMESG
-#define LOG(...)
+#define LOG DMESG
+//#define LOG(...)
 
 static uint8_t usb_initialised = 0;
 // usb_20.pdf
@@ -93,7 +93,7 @@ static const char *default_strings[] = {
 #define VENDOR_WEBUSB 0x40
 #define VENDOR_MS20 0x41
 
-#define WINUSB_SIZE()                                                                              \
+#define WINUSB_SIZE() \
     (sizeof(msOS20Descriptor) + numWebUSBInterfaces * sizeof(msOS20FunctionDescriptor))
 
 static const uint8_t bosDescriptor[] = {
@@ -120,9 +120,9 @@ static const uint8_t bosDescriptor[] = {
     0xDF, 0x60, 0xDD, 0xD8, 0x89, 0x45, 0xC7, 0x4C, // MS OS 2.0 GUID
     0x9C, 0xD2, 0x65, 0x9D, 0x9E, 0x64, 0x8A, 0x9F, // MS OS 2.0 GUID
     0x00, 0x00, 0x03, 0x06,                         // Windows version
-    0xff, 0xff,  // Descriptor set length; bosDescriptor[sizeof(bosDescriptor)-4]
-    VENDOR_MS20, // Vendor request code
-    0x00         // Alternate enumeration code
+    0xff, 0xff,                                     // Descriptor set length; bosDescriptor[sizeof(bosDescriptor)-4]
+    VENDOR_MS20,                                    // Vendor request code
+    0x00                                            // Alternate enumeration code
 };
 
 static const uint8_t msOS20FunctionDescriptor[] = {
@@ -242,8 +242,8 @@ int CodalUSB::sendConfig()
     ((ConfigDescriptor *)buf)->maxPower = maxPower;
     clen = sizeof(ConfigDescriptor);
 
-#define ADD_DESC(desc)                                                                             \
-    memcpy(buf + clen, &desc, sizeof(desc));                                                       \
+#define ADD_DESC(desc)                       \
+    memcpy(buf + clen, &desc, sizeof(desc)); \
     clen += sizeof(desc)
 
     // send our descriptors

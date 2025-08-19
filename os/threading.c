@@ -14,7 +14,7 @@ bool createThread(void (*task)(void), uint8_t priority)
     { // Ensure task is valid
         return false;
     }
-    if (threadCount >= MAX_THREADS-1)
+    if (threadCount >= MAX_THREADS - 1)
     { // Thread pool is full
         return false;
     }

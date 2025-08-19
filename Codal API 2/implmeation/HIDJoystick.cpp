@@ -29,55 +29,55 @@ DEALINGS IN THE SOFTWARE.
 
 using namespace codal;
 
-//this descriptor must be stored in RAM
+// this descriptor must be stored in RAM
 static char HIDJoystickDescriptor[] = {
-	 0x05, 0x01, // USAGE_PAGE (Generic Desktop)
-	 0x09, 0x05, // USAGE (Game Pad)
-	 0xa1, 0x01, // COLLECTION (Application)
-	 0x05, 0x02, // USAGE_PAGE (Simulation Controls)
-	 0x09, 0xbb, // USAGE (Throttle)
-	 0x15, 0x00, // LOGICAL_MINIMUM (0)
-	 0x25, 0x1f, // LOGICAL_MAXIMUM (31)
-	 0x75, 0x08, // REPORT_SIZE (8)
-	 0x95, 0x01, // REPORT_COUNT (1)
-	 0x81, 0x02, // INPUT (Data,Var,Abs)
-	 0x05, 0x02, // USAGE_PAGE (Simulation Controls)
-	 0x09, 0xb0, // USAGE (Rudder)
-	 0x15, 0x00, // LOGICAL_MINIMUM (0)
-	 0x25, 0x1f, // LOGICAL_MAXIMUM (31)
-	 0x75, 0x08, // REPORT_SIZE (8)
-	 0x95, 0x01, // REPORT_COUNT (1)
-	 0x81, 0x02, // INPUT (Data,Var,Abs)
-	 0x05, 0x01, // USAGE_PAGE (Generic Desktop)
-	 0xa1, 0x00, // COLLECTION (Physical)
-	 0x09, 0x30, // USAGE (X)
-	 0x09, 0x31, // USAGE (Y)
-	 0x09, 0x32, // USAGE (Z)
-	 0x09, 0x35, // USAGE (Rz)
-	 0x15, 0x81, // LOGICAL_MINIMUM (-127)
-	 0x25, 0x7f, // LOGICAL_MAXIMUM (127)
-	 0x75, 0x08, // REPORT_SIZE (8)
-	 0x95, 0x04, // REPORT_COUNT (4)
-	 0x81, 0x02, // INPUT (Data,Var,Abs)
-	 0x05, 0x09, // USAGE_PAGE (Button)
-	 0x19, 0x01, // USAGE_MINIMUM (Button 1)
-	 0x29, 0x10, // USAGE_MAXIMUM (Button 16)
-	 0x15, 0x00, // LOGICAL_MINIMUM (0)
-	 0x25, 0x01, // LOGICAL_MAXIMUM (1)
-	 0x75, 0x01, // REPORT_SIZE (1)
-	 0x95, 0x10, // REPORT_COUNT (16)
-	 0x81, 0x02, // INPUT (Data,Var,Abs)
-	 0xc0, // END_COLLECTION
-	 0xc0 // END_COLLECTION
+	0x05, 0x01, // USAGE_PAGE (Generic Desktop)
+	0x09, 0x05, // USAGE (Game Pad)
+	0xa1, 0x01, // COLLECTION (Application)
+	0x05, 0x02, // USAGE_PAGE (Simulation Controls)
+	0x09, 0xbb, // USAGE (Throttle)
+	0x15, 0x00, // LOGICAL_MINIMUM (0)
+	0x25, 0x1f, // LOGICAL_MAXIMUM (31)
+	0x75, 0x08, // REPORT_SIZE (8)
+	0x95, 0x01, // REPORT_COUNT (1)
+	0x81, 0x02, // INPUT (Data,Var,Abs)
+	0x05, 0x02, // USAGE_PAGE (Simulation Controls)
+	0x09, 0xb0, // USAGE (Rudder)
+	0x15, 0x00, // LOGICAL_MINIMUM (0)
+	0x25, 0x1f, // LOGICAL_MAXIMUM (31)
+	0x75, 0x08, // REPORT_SIZE (8)
+	0x95, 0x01, // REPORT_COUNT (1)
+	0x81, 0x02, // INPUT (Data,Var,Abs)
+	0x05, 0x01, // USAGE_PAGE (Generic Desktop)
+	0xa1, 0x00, // COLLECTION (Physical)
+	0x09, 0x30, // USAGE (X)
+	0x09, 0x31, // USAGE (Y)
+	0x09, 0x32, // USAGE (Z)
+	0x09, 0x35, // USAGE (Rz)
+	0x15, 0x81, // LOGICAL_MINIMUM (-127)
+	0x25, 0x7f, // LOGICAL_MAXIMUM (127)
+	0x75, 0x08, // REPORT_SIZE (8)
+	0x95, 0x04, // REPORT_COUNT (4)
+	0x81, 0x02, // INPUT (Data,Var,Abs)
+	0x05, 0x09, // USAGE_PAGE (Button)
+	0x19, 0x01, // USAGE_MINIMUM (Button 1)
+	0x29, 0x10, // USAGE_MAXIMUM (Button 16)
+	0x15, 0x00, // LOGICAL_MINIMUM (0)
+	0x25, 0x01, // LOGICAL_MAXIMUM (1)
+	0x75, 0x01, // REPORT_SIZE (1)
+	0x95, 0x10, // REPORT_COUNT (16)
+	0x81, 0x02, // INPUT (Data,Var,Abs)
+	0xc0,		// END_COLLECTION
+	0xc0		// END_COLLECTION
 };
 
 static const HIDReportDescriptor reportDesc = {
 	9,
-	0x21,                  // HID
-	0x101,                 // hidbcd 1.01
-	0x00,                  // country code
-	0x01,                  // num desc
-	0x22,                  // report desc type
+	0x21,  // HID
+	0x101, // hidbcd 1.01
+	0x00,  // country code
+	0x01,  // num desc
+	0x22,  // report desc type
 	sizeof(HIDJoystickDescriptor),
 };
 
@@ -86,7 +86,7 @@ static const InterfaceInfo ifaceInfo = {
 	sizeof(reportDesc),
 	1,
 	{
-		1,    // numEndpoints
+		1,	  // numEndpoints
 		0x03, /// class code - HID
 		0x00, // subclass - none
 		0x00, // protocol - none (there isn't a protocol defined for gamepad/joystick)
@@ -98,12 +98,17 @@ static const InterfaceInfo ifaceInfo = {
 };
 
 static HIDJoystickState joystickState = {
-	0, 0, 0, 0, 0, 0, 0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
 };
 
 USBHIDJoystick::USBHIDJoystick() : USBHID()
 {
-
 }
 
 int USBHIDJoystick::stdRequest(UsbEndpointIn &ctrl, USBSetup &setup)
@@ -132,9 +137,10 @@ const InterfaceInfo *USBHIDJoystick::getInterfaceInfo()
 int USBHIDJoystick::buttonDown(uint8_t b)
 {
 	uint16_t btn = (1UL << b);
-	if( joystickState.buttons & btn )
+	if (joystickState.buttons & btn)
 		return DEVICE_OK;
-	else{
+	else
+	{
 		joystickState.buttons |= btn;
 		return sendReport();
 	}
@@ -143,9 +149,10 @@ int USBHIDJoystick::buttonDown(uint8_t b)
 int USBHIDJoystick::buttonUp(uint8_t b)
 {
 	uint16_t btn = (1UL << b);
-	if( !(joystickState.buttons & btn) )
+	if (!(joystickState.buttons & btn))
 		return DEVICE_OK;
-	else{
+	else
+	{
 		joystickState.buttons &= ~(btn);
 		return sendReport();
 	}
@@ -153,36 +160,38 @@ int USBHIDJoystick::buttonUp(uint8_t b)
 
 int USBHIDJoystick::move(int8_t num, int8_t x, int8_t y)
 {
-	switch(num){
-		case 0:
-			joystickState.x0 = x;
-			joystickState.y0 = y;
-			break;
-		case 1:
-			joystickState.x1 = x;
-			joystickState.y1 = y;
-			break;
-		default:
-			return DEVICE_INVALID_PARAMETER;
-			break;
+	switch (num)
+	{
+	case 0:
+		joystickState.x0 = x;
+		joystickState.y0 = y;
+		break;
+	case 1:
+		joystickState.x1 = x;
+		joystickState.y1 = y;
+		break;
+	default:
+		return DEVICE_INVALID_PARAMETER;
+		break;
 	}
 	return sendReport();
 }
 
 int USBHIDJoystick::setThrottle(uint8_t num, uint8_t val)
 {
-	if(val > 31)
+	if (val > 31)
 		return DEVICE_INVALID_PARAMETER;
-	switch(num){
-		case 0:
-			joystickState.throttle0 = val;
-			break;
-		case 1:
-			joystickState.throttle1 = val;
-			break;
-		default:
-			return DEVICE_INVALID_PARAMETER;
-			break;
+	switch (num)
+	{
+	case 0:
+		joystickState.throttle0 = val;
+		break;
+	case 1:
+		joystickState.throttle1 = val;
+		break;
+	default:
+		return DEVICE_INVALID_PARAMETER;
+		break;
 	}
 	return sendReport();
 }

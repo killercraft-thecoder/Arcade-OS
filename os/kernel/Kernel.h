@@ -5,8 +5,10 @@
 #include <vector>
 #include <functional>
 
-namespace Kernel {
-    struct Task {
+namespace Kernel
+{
+    struct Task
+    {
         uint32_t id;
         std::function<void()> function;
         bool visible;
@@ -15,8 +17,8 @@ namespace Kernel {
     void Init();
     void RegisterTask(std::function<void()> taskFunction, bool visible = true);
     void RunTasks();
-    uint32_t* AllocateRAM(uint32_t size);
-    bool DeallocateRAM(uint32_t* pointer);
+    uint32_t *AllocateRAM(uint32_t size);
+    bool DeallocateRAM(uint32_t *pointer);
     void TriggerGC();
     // Add more kernel services as needed
 }

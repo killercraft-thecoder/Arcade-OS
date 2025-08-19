@@ -33,14 +33,14 @@ DEALINGS IN THE SOFTWARE.
 using namespace codal;
 
 /**
-* Default implementation of DataSource and DataSink classes.
-*/
+ * Default implementation of DataSource and DataSink classes.
+ */
 ManagedBuffer DataSource::pull()
 {
-	return ManagedBuffer();
+    return ManagedBuffer();
 }
 
-void DataSource::connect(DataSink& )
+void DataSource::connect(DataSink &)
 {
 }
 
@@ -58,7 +58,8 @@ int DataSource::setFormat(int format)
     return DEVICE_NOT_SUPPORTED;
 }
 
-float DataSource::getSampleRate() {
+float DataSource::getSampleRate()
+{
     return DATASTREAM_SAMPLE_RATE_UNKNOWN;
 }
 
@@ -72,17 +73,17 @@ int DataSource::isWanted()
     return dataIsWanted;
 }
 
-//DataSink methods.
+// DataSink methods.
 int DataSink::pullRequest()
 {
-	return DEVICE_NOT_SUPPORTED;
+    return DEVICE_NOT_SUPPORTED;
 }
 
 // DataSourceSink methods.
-DataSourceSink::DataSourceSink(DataSource &source) : upStream( source )
+DataSourceSink::DataSourceSink(DataSource &source) : upStream(source)
 {
     downStream = NULL;
-    source.connect( *this );
+    source.connect(*this);
     dataWanted(DATASTREAM_DONT_CARE);
 }
 
@@ -96,7 +97,7 @@ void DataSourceSink::connect(DataSink &sink)
 }
 
 bool DataSourceSink::isConnected()
-{ 
+{
     return downStream != NULL;
 }
 
@@ -112,7 +113,7 @@ int DataSourceSink::getFormat()
 
 int DataSourceSink::setFormat(int format)
 {
-    return upStream.setFormat( format );
+    return upStream.setFormat(format);
 }
 
 float DataSourceSink::getSampleRate()
@@ -128,7 +129,7 @@ void DataSourceSink::dataWanted(int wanted)
 
 int DataSourceSink::pullRequest()
 {
-    if( this->downStream != NULL )
+    if (this->downStream != NULL)
         return this->downStream->pullRequest();
     return DEVICE_BUSY;
 }
@@ -150,7 +151,7 @@ DataStream::~DataStream()
 
 bool DataStream::isReadOnly()
 {
-    if( this->hasPending )
+    if (this->hasPending)
         return this->nextBuffer.isReadOnly();
     return true;
 }
@@ -164,7 +165,7 @@ void DataStream::setBlocking(bool isBlocking)
     {
         this->pullRequestEventCode = allocateNotifyEvent();
 
-        if(EventModel::defaultEventBus)
+        if (EventModel::defaultEventBus)
             EventModel::defaultEventBus->listen(DEVICE_ID_NOTIFY, this->pullRequestEventCode, this, &DataStream::onDeferredPullRequest);
     }
 }
@@ -172,11 +173,11 @@ void DataStream::setBlocking(bool isBlocking)
 ManagedBuffer DataStream::pull()
 {
     // Are we running in sync (blocking) mode?
-    if( this->isBlocking )
+    if (this->isBlocking)
         return this->upStream.pull();
-    
+
     this->hasPending = false;
-    return ManagedBuffer( this->nextBuffer ); // Deep copy!
+    return ManagedBuffer(this->nextBuffer); // Deep copy!
 }
 
 void DataStream::onDeferredPullRequest(Event)
@@ -194,16 +195,17 @@ bool DataStream::canPull(int size)
 int DataStream::pullRequest()
 {
     // Are we running in async (non-blocking) mode?
-    if( !this->isBlocking ) {
+    if (!this->isBlocking)
+    {
 
         this->nextBuffer = this->upStream.pull();
         this->hasPending = true;
 
-        Event evt( DEVICE_ID_NOTIFY, this->pullRequestEventCode );
+        Event evt(DEVICE_ID_NOTIFY, this->pullRequestEventCode);
         return DEVICE_OK;
     }
 
-    if( this->downStream != NULL )
+    if (this->downStream != NULL)
         return this->downStream->pullRequest();
 
     return DEVICE_BUSY;

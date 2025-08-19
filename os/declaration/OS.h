@@ -3,7 +3,8 @@
 
 #define ARCADEOS
 
-const char* get_os_name() {
+const char *get_os_name()
+{
     return "ARCADEOS";
 }
 

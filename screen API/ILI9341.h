@@ -30,12 +30,12 @@ DEALINGS IN THE SOFTWARE.
 namespace codal
 {
 
-class ILI9341 : public ST7735
-{
-public:
-    ILI9341(ScreenIO &io, Pin &cs, Pin &dc);
-    int init();
-};
+    class ILI9341 : public ST7735
+    {
+    public:
+        ILI9341(ScreenIO &io, Pin &cs, Pin &dc);
+        int init();
+    };
 
 }
 

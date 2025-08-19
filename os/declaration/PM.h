@@ -3,7 +3,8 @@
 
 #include <cstdint>
 
-namespace PM {
+namespace PM
+{
     void EnterSleepState(uint32_t durationInMinutes); // Enter sleep mode for a set duration
 }
 

@@ -30,63 +30,63 @@ DEALINGS IN THE SOFTWARE.
 namespace codal
 {
 
-class MixerChannel
-{
-private:
-    MixerChannel *next;
-    DataStream *stream;
-    friend class Mixer;
+    class MixerChannel
+    {
+    private:
+        MixerChannel *next;
+        DataStream *stream;
+        friend class Mixer;
 
-public:
-    uint16_t volume;
-    bool isSigned;
-};
+    public:
+        uint16_t volume;
+        bool isSigned;
+    };
 
-class Mixer : public DataSource, public DataSink
-{
-    MixerChannel *channels;
-    DataSink *downStream;
+    class Mixer : public DataSource, public DataSink
+    {
+        MixerChannel *channels;
+        DataSink *downStream;
 
-public:
-    /**
-     * Default Constructor.
-     * Creates an empty Mixer.
-     */
-    Mixer();
+    public:
+        /**
+         * Default Constructor.
+         * Creates an empty Mixer.
+         */
+        Mixer();
 
-    /**
-     * Destructor.
-     * Removes all resources held by the instance.
-     */
-    ~Mixer();
+        /**
+         * Destructor.
+         * Removes all resources held by the instance.
+         */
+        ~Mixer();
 
-    MixerChannel *addChannel(DataStream &stream);
+        MixerChannel *addChannel(DataStream &stream);
 
-    /**
-     * Provide the next available ManagedBuffer to our downstream caller, if available.
-     */
-    virtual ManagedBuffer pull();
+        /**
+         * Provide the next available ManagedBuffer to our downstream caller, if available.
+         */
+        virtual ManagedBuffer pull();
 
-    /**
-     * Deliver the next available ManagedBuffer to our downstream caller.
-     */
-    virtual int pullRequest();
+        /**
+         * Deliver the next available ManagedBuffer to our downstream caller.
+         */
+        virtual int pullRequest();
 
-    /**
-     * Define a downstream component for data stream.
-     *
-     * @sink The component that data will be delivered to, when it is available
-     */
-    virtual void connect(DataSink &sink);
+        /**
+         * Define a downstream component for data stream.
+         *
+         * @sink The component that data will be delivered to, when it is available
+         */
+        virtual void connect(DataSink &sink);
 
-    /**
-     * Determines if this source is connected to a downstream component
-     * 
-     * @return true If a downstream is connected
-     * @return false If a downstream is not connected
-     */
-    bool isConnected();
-};
+        /**
+         * Determines if this source is connected to a downstream component
+         *
+         * @return true If a downstream is connected
+         * @return false If a downstream is not connected
+         */
+        bool isConnected();
+    };
 
 } // namespace codal
 

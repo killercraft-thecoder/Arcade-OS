@@ -5,7 +5,8 @@
 #include <stdbool.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 // 255 minus size of the serial header, rounded down to 4
@@ -89,31 +90,33 @@ extern "C" {
 // typically the same as JD_REG_CTRL_DEVICE_CLASS; the bootloader will respond to that code
 #define JD_REG_CTRL_BL_DEVICE_CLASS 0x184
 
-struct _jd_packet_t {
-    uint16_t crc;
-    uint8_t _size; // of frame data[]
-    uint8_t flags;
+    struct _jd_packet_t
+    {
+        uint16_t crc;
+        uint8_t _size; // of frame data[]
+        uint8_t flags;
 
-    uint64_t device_identifier;
+        uint64_t device_identifier;
 
-    uint8_t service_size;
-    uint8_t service_number;
-    uint16_t service_command;
+        uint8_t service_size;
+        uint8_t service_number;
+        uint16_t service_command;
 
-    uint8_t data[0];
-} __attribute__((__packed__, aligned(4)));
-typedef struct _jd_packet_t jd_packet_t;
+        uint8_t data[0];
+    } __attribute__((__packed__, aligned(4)));
+    typedef struct _jd_packet_t jd_packet_t;
 
-struct _jd_frame_t {
-    uint16_t crc;
-    uint8_t size;
-    uint8_t flags;
+    struct _jd_frame_t
+    {
+        uint16_t crc;
+        uint8_t size;
+        uint8_t flags;
 
-    uint64_t device_identifier;
+        uint64_t device_identifier;
 
-    uint8_t data[JD_SERIAL_PAYLOAD_SIZE + 4];
-} __attribute__((__packed__, aligned(4)));
-typedef struct _jd_frame_t jd_frame_t;
+        uint8_t data[JD_SERIAL_PAYLOAD_SIZE + 4];
+    } __attribute__((__packed__, aligned(4)));
+    typedef struct _jd_frame_t jd_frame_t;
 
 #define JDSPI_MAGIC 0x7ACD
 #define JDSPI_MAGIC_NOOP 0xB3CD

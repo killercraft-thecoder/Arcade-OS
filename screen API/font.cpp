@@ -4,7 +4,6 @@
 #include <vector>
 #include <cmath> // for floor
 
-
 // Font structure definition
 struct Font
 {
@@ -104,7 +103,8 @@ bool imagePrintCenter(Image &img, const std::string &text, int y, int color = -1
         font = &getFontForText(text);
     }
 
-    if (font == NULLFONT) {
+    if (font == NULLFONT)
+    {
         return false; // Failure to Print.
     }
 
@@ -125,8 +125,8 @@ void imagePrint(
     int x,
     int y,
     int color = 1,
-    const Font *font = nullptr,
-) {
+    const Font *font = nullptr, )
+{
 
     x = std::floor(x);
     y = std::floor(y);

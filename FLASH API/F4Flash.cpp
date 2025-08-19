@@ -28,6 +28,6 @@ namespace codal
 
     inline int F4Flash::writeBytes(uintptr_t dst, const void *src, uint32_t len)
     {
-        return ZFlash::writeBytes(dst,src,len)
+        return ZFlash::writeBytes(dst, src, len)
     }
 }

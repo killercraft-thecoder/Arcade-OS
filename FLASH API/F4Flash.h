@@ -3,11 +3,13 @@
 
 #include "stm32flash.h"
 
-namespace codal {
+namespace codal
+{
     /**
      * STM32F4-specific flash implementation.
      */
-    class F4Flash : public STM32Flash {
+    class F4Flash : public STM32Flash
+    {
     public:
         int pageSize(uintptr_t address) override;
         int totalSize() override;

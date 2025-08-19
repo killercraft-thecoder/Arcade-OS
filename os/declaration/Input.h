@@ -21,11 +21,11 @@
 #define BTN_NULL_ID 0    // the ID for a NULL Button
 
 // Declare external button instances
-JADAC_Button A = JADAC_Button(BTN_A);     // Button A
-JADAC_Button B = JADAC_Button(BTN_B);     // Button B
-JADAC_Button UP = JADAC_Button(BTN_UP);    // Button UP
-JADAC_Button DOWN = JADAC_Button(BTN_DOWN);  // Button DOWN
-JADAC_Button LEFT = JADAC_Button(BTN_LEFT);  // Button LEFT
+JADAC_Button A = JADAC_Button(BTN_A);         // Button A
+JADAC_Button B = JADAC_Button(BTN_B);         // Button B
+JADAC_Button UP = JADAC_Button(BTN_UP);       // Button UP
+JADAC_Button DOWN = JADAC_Button(BTN_DOWN);   // Button DOWN
+JADAC_Button LEFT = JADAC_Button(BTN_LEFT);   // Button LEFT
 JADAC_Button RIGHT = JADAC_Button(BTN_RIGHT); // Button RIGHT
 static uint16_t buttonsPressed = 0;
 

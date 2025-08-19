@@ -2,24 +2,24 @@
 #define OS_ALLOC_H
 
 #include <stddef.h>
-#include "CodalHeapAllocator.h"  // Codal's heap interface
+#include "CodalHeapAllocator.h" // Codal's heap interface
 
 namespace OS
 {
     // Allocate memory
-    static inline void* Malloc(size_t size)
+    static inline void *Malloc(size_t size)
     {
         return device_malloc(size);
     }
 
     // Free memory
-    static inline void Free(void* ptr)
+    static inline void Free(void *ptr)
     {
         device_free(ptr);
     }
 
     // Resize memory
-    static inline void* Realloc(void* ptr, size_t size)
+    static inline void *Realloc(void *ptr, size_t size)
     {
         return device_realloc(ptr, size);
     }

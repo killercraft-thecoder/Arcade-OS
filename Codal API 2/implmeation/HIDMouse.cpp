@@ -29,44 +29,44 @@ DEALINGS IN THE SOFTWARE.
 
 using namespace codal;
 
-//this descriptor must be stored in RAM
+// this descriptor must be stored in RAM
 static char hidMouseDescriptor[] = {
-	0x05, 0x01, 		//Usage Page: Generic Desktop Controls
-	0x09, 0x02, 		//Usage: Mouse (2)
-	0xA1, 0x01, 		//Collection: Application
-	0x09, 0x01, 		//Usage: Pointer (1)
-	0xA1, 0x00, 		//Collection: Physical
-	0x05, 0x09, 		//Usage Page: Button (9)
-	0x19, 0x01, 		//Usage Minimum: Button 1
-	0x29, 0x03, 		//Usage Maximum: Button 3
-	0x15, 0x00, 		//Logical Minimum: 0
-	0x25, 0x01, 		//Logical Maximum: 1
-	0x95, 0x03, 		//Report Count: 3
-	0x75, 0x01, 		//Report Size: 1
-	0x81, 0x02, 		//Input: Data (2)
-	0x95, 0x01, 		//Report Count: 1
-	0x75, 0x05, 		//Report Size: 5
-	0x81, 0x01, 		//Input: Constant (1)
-	0x05, 0x01, 		//Usage Page: Generic Desktop Controls
-	0x09, 0x30, 		//Usage: X
-	0x09, 0x31, 		//Usage: Y
-	0x09, 0x38, 		//Usage: Wheel
-	0x15, 0x81, 		//Logical Minimum: -127
-	0x25, 0x7f, 		//Logical Maximum: 127
-	0x75, 0x08, 		//Report Size: 8
-	0x95, 0x03, 		//Report Count: 3
-	0x81, 0x06, 		//Input: Data (6)
-	0xC0, 				//End collection
-	0xC0 				//End collection
+	0x05, 0x01, // Usage Page: Generic Desktop Controls
+	0x09, 0x02, // Usage: Mouse (2)
+	0xA1, 0x01, // Collection: Application
+	0x09, 0x01, // Usage: Pointer (1)
+	0xA1, 0x00, // Collection: Physical
+	0x05, 0x09, // Usage Page: Button (9)
+	0x19, 0x01, // Usage Minimum: Button 1
+	0x29, 0x03, // Usage Maximum: Button 3
+	0x15, 0x00, // Logical Minimum: 0
+	0x25, 0x01, // Logical Maximum: 1
+	0x95, 0x03, // Report Count: 3
+	0x75, 0x01, // Report Size: 1
+	0x81, 0x02, // Input: Data (2)
+	0x95, 0x01, // Report Count: 1
+	0x75, 0x05, // Report Size: 5
+	0x81, 0x01, // Input: Constant (1)
+	0x05, 0x01, // Usage Page: Generic Desktop Controls
+	0x09, 0x30, // Usage: X
+	0x09, 0x31, // Usage: Y
+	0x09, 0x38, // Usage: Wheel
+	0x15, 0x81, // Logical Minimum: -127
+	0x25, 0x7f, // Logical Maximum: 127
+	0x75, 0x08, // Report Size: 8
+	0x95, 0x03, // Report Count: 3
+	0x81, 0x06, // Input: Data (6)
+	0xC0,		// End collection
+	0xC0		// End collection
 };
 
 static const HIDReportDescriptor reportDesc = {
 	9,
-	0x21,                  // HID
-	0x101,                 // hidbcd 1.01
-	0x00,                  // country code
-	0x01,                  // num desc
-	0x22,                  // report desc type
+	0x21,  // HID
+	0x101, // hidbcd 1.01
+	0x00,  // country code
+	0x01,  // num desc
+	0x22,  // report desc type
 	sizeof(hidMouseDescriptor),
 };
 
@@ -75,7 +75,7 @@ static const InterfaceInfo ifaceInfo = {
 	sizeof(reportDesc),
 	1,
 	{
-		1,    // numEndpoints
+		1,	  // numEndpoints
 		0x03, /// class code - HID
 		0x01, // subclass (boot interface)
 		0x02, // protocol (Mouse)
@@ -87,12 +87,10 @@ static const InterfaceInfo ifaceInfo = {
 };
 
 static HIDMouseState mouseState = {
-	0, 0, 0, 0, 0, 0, 0
-};
+	0, 0, 0, 0, 0, 0, 0};
 
 USBHIDMouse::USBHIDMouse() : USBHID()
 {
-
 }
 
 int USBHIDMouse::stdRequest(UsbEndpointIn &ctrl, USBSetup &setup)
@@ -120,9 +118,10 @@ const InterfaceInfo *USBHIDMouse::getInterfaceInfo()
 
 int USBHIDMouse::buttonDown(USBHIDMouseButton b)
 {
-	if(mouseState.buttons.reg & b)
+	if (mouseState.buttons.reg & b)
 		return DEVICE_OK;
-	else{
+	else
+	{
 		mouseState.buttons.reg |= b;
 		return sendReport();
 	}
@@ -130,9 +129,10 @@ int USBHIDMouse::buttonDown(USBHIDMouseButton b)
 
 int USBHIDMouse::buttonUp(USBHIDMouseButton b)
 {
-	if( !(mouseState.buttons.reg & b) )
+	if (!(mouseState.buttons.reg & b))
 		return DEVICE_OK;
-	else{
+	else
+	{
 		mouseState.buttons.reg &= ~(b);
 		return sendReport();
 	}
@@ -159,7 +159,7 @@ int USBHIDMouse::sendReport()
 	uint8_t report[sizeof(HIDMouseState)];
 	memcpy(report, &mouseState, sizeof(HIDMouseState));
 
-	//movements are relative
+	// movements are relative
 	mouseState.xMovement = 0;
 	mouseState.yMovement = 0;
 	mouseState.wheelMovement = 0;

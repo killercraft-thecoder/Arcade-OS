@@ -11,7 +11,7 @@ namespace PM
 
         target_wait((durationInMinutes * 60) * 1000) // sleep.
 
-        WakeUp(); // Automatically wake up after the sleep duration
+            WakeUp(); // Automatically wake up after the sleep duration
     }
 
     static inline void WakeUp()
