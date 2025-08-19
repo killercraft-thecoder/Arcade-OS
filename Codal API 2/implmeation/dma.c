@@ -9,7 +9,7 @@
 #define NUM_DMA 2
 
 #define LOG DMESG
-//#define LOG(...) ((void)0)
+// #define LOG(...) ((void)0)
 
 typedef struct
 {
@@ -46,8 +46,14 @@ const DmaStream streams[] = //
      {0, 0}};
 
 const uint32_t channels[] = {
-    DMA_CHANNEL_0, DMA_CHANNEL_1, DMA_CHANNEL_2, DMA_CHANNEL_3,
-    DMA_CHANNEL_4, DMA_CHANNEL_5, DMA_CHANNEL_6, DMA_CHANNEL_7,
+    DMA_CHANNEL_0,
+    DMA_CHANNEL_1,
+    DMA_CHANNEL_2,
+    DMA_CHANNEL_3,
+    DMA_CHANNEL_4,
+    DMA_CHANNEL_5,
+    DMA_CHANNEL_6,
+    DMA_CHANNEL_7,
 };
 
 MBED_WEAK const DmaMap TheDmaMap[] = //
@@ -124,7 +130,7 @@ static void irq_callback(int id)
         HAL_DMA_IRQHandler(handles[id]);
 }
 
-#define DEFIRQ(nm, id)                                                                             \
+#define DEFIRQ(nm, id) \
     void nm() { irq_callback(id); }
 
 DEFIRQ(DMA1_Stream0_IRQHandler, 0)

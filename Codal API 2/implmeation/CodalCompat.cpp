@@ -23,9 +23,9 @@ DEALINGS IN THE SOFTWARE.
 */
 
 /**
-  * This file contains functions used to maintain compatability and portability.
-  * It also contains constants that are used elsewhere in the DAL.
-  */
+ * This file contains functions used to maintain compatability and portability.
+ * It also contains constants that are used elsewhere in the DAL.
+ */
 #include "CodalConfig.h"
 #include "CodalCompat.h"
 #include "ErrorNo.h"
@@ -33,16 +33,16 @@ DEALINGS IN THE SOFTWARE.
 static uint32_t random_value;
 
 /**
-  * Performs an in buffer reverse of a given char array.
-  *
-  * @param s the string to reverse.
-  *
-  * @return DEVICE_OK, or DEVICE_INVALID_PARAMETER.
-  */
+ * Performs an in buffer reverse of a given char array.
+ *
+ * @param s the string to reverse.
+ *
+ * @return DEVICE_OK, or DEVICE_INVALID_PARAMETER.
+ */
 int codal::string_reverse(char *s)
 {
-    //sanity check...
-    if(s == NULL)
+    // sanity check...
+    if (s == NULL)
         return DEVICE_INVALID_PARAMETER;
 
     char *j;
@@ -50,7 +50,7 @@ int codal::string_reverse(char *s)
 
     j = s + strlen(s) - 1;
 
-    while(s < j)
+    while (s < j)
     {
         c = *s;
         *s++ = *j;
@@ -61,14 +61,14 @@ int codal::string_reverse(char *s)
 }
 
 /**
-  * Converts a given integer into a string representation.
-  *
-  * @param n The number to convert.
-  *
-  * @param s A pointer to the buffer where the resulting string will be stored.
-  *
-  * @return DEVICE_OK, or DEVICE_INVALID_PARAMETER.
-  */
+ * Converts a given integer into a string representation.
+ *
+ * @param n The number to convert.
+ *
+ * @param s A pointer to the buffer where the resulting string will be stored.
+ *
+ * @return DEVICE_OK, or DEVICE_INVALID_PARAMETER.
+ */
 int codal::itoa(int n, char *s)
 {
     int i = 0;
@@ -83,8 +83,9 @@ int codal::itoa(int n, char *s)
         n = -n;
 
     // Calculate each character, starting with the LSB.
-    do {
-         s[i++] = abs(n % 10) + '0';
+    do
+    {
+        s[i++] = abs(n % 10) + '0';
     } while (abs(n /= 10) > 0);
 
     // Add a negative sign as needed

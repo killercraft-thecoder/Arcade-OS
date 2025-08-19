@@ -30,35 +30,34 @@ DEALINGS IN THE SOFTWARE.
 
 #define INITIAL_STACK_DEPTH (fiber_initial_stack_base() - 0x04)
 
-
 /*
  * Statically allocated values used to create and destroy Fibers.
  * required to be defined here to allow persistence during context switches.
  */
 namespace codal
 {
-Fiber *currentFiber = NULL;                        // The context in which the current fiber is executing.
-static Fiber *forkedFiber = NULL;                  // The context in which a newly created child fiber is executing.
-static Fiber *idleFiber = NULL;                    // the idle task - performs a power efficient sleep, and system maintenance tasks.
+    Fiber *currentFiber = NULL;       // The context in which the current fiber is executing.
+    static Fiber *forkedFiber = NULL; // The context in which a newly created child fiber is executing.
+    static Fiber *idleFiber = NULL;   // the idle task - performs a power efficient sleep, and system maintenance tasks.
 
-/*
- * Scheduler state.
- */
-static Fiber *runQueue = NULL;                     // The list of runnable fibers.
-static Fiber *sleepQueue = NULL;                   // The list of blocked fibers waiting on a fiber_sleep() operation.
-static Fiber *waitQueue = NULL;                    // The list of blocked fibers waiting on an event.
-static Fiber *fiberPool = NULL;                    // Pool of unused fibers, just waiting for a job to do.
-static Fiber *fiberList = NULL;                    // List of all active Fibers (excludes those in the fiberPool)
+    /*
+     * Scheduler state.
+     */
+    static Fiber *runQueue = NULL;   // The list of runnable fibers.
+    static Fiber *sleepQueue = NULL; // The list of blocked fibers waiting on a fiber_sleep() operation.
+    static Fiber *waitQueue = NULL;  // The list of blocked fibers waiting on an event.
+    static Fiber *fiberPool = NULL;  // Pool of unused fibers, just waiting for a job to do.
+    static Fiber *fiberList = NULL;  // List of all active Fibers (excludes those in the fiberPool)
 
-/*
- * Scheduler wide flags
- */
-static uint8_t fiber_flags = 0;
+    /*
+     * Scheduler wide flags
+     */
+    static uint8_t fiber_flags = 0;
 
-/*
- * Fibers may perform wait/notify semantics on events. If set, these operations will be permitted on this EventModel.
- */
-static EventModel *messageBus = NULL;
+    /*
+     * Fibers may perform wait/notify semantics on events. If set, these operations will be permitted on this EventModel.
+     */
+    static EventModel *messageBus = NULL;
 }
 
 using namespace codal;
@@ -111,7 +110,7 @@ void codal::dequeue_fiber(Fiber *f)
     else
         *(f->queue) = f->qnext;
 
-    if(f->qnext)
+    if (f->qnext)
         f->qnext->qprev = f->qprev;
 
     f->qnext = NULL;
@@ -121,7 +120,7 @@ void codal::dequeue_fiber(Fiber *f)
     target_enable_irq();
 }
 
-Fiber * codal::get_fiber_list()
+Fiber *codal::get_fiber_list()
 {
     return fiberList;
 }
@@ -142,7 +141,8 @@ Fiber *getFiberContext()
     {
         f = new Fiber();
 
-        if (f == NULL) {
+        if (f == NULL)
+        {
             target_enable_irq();
             return NULL;
         }
@@ -158,9 +158,9 @@ Fiber *getFiberContext()
     // Ensure this fiber is in suitable state for reuse.
     f->flags = 0;
 
-    #if CONFIG_ENABLED(DEVICE_FIBER_USER_DATA)
+#if CONFIG_ENABLED(DEVICE_FIBER_USER_DATA)
     f->user_data = 0;
-    #endif
+#endif
 
     tcb_configure_stack_base(f->tcb, fiber_initial_stack_base());
 
@@ -179,7 +179,7 @@ void codal::scheduler_init(EventModel &_messageBus)
     if (fiber_scheduler_running())
         return;
 
-        // Store a reference to the messageBus provided.
+    // Store a reference to the messageBus provided.
     // This parameter will be NULL if we're being run without a message bus.
     messageBus = &_messageBus;
 
@@ -236,7 +236,7 @@ void codal::scheduler_tick(Event evt)
         {
             // Wakey wakey!
             dequeue_fiber(f);
-            queue_fiber(f,&runQueue);
+            queue_fiber(f, &runQueue);
         }
 
         f = t;
@@ -271,7 +271,7 @@ void codal::scheduler_event(Event evt)
             {
                 // Wakey wakey!
                 dequeue_fiber(f);
-                queue_fiber(f,&runQueue);
+                queue_fiber(f, &runQueue);
                 notifyOneComplete = 1;
             }
         }
@@ -281,7 +281,7 @@ void codal::scheduler_event(Event evt)
         {
             // Wakey wakey!
             dequeue_fiber(f);
-            queue_fiber(f,&runQueue);
+            queue_fiber(f, &runQueue);
         }
 
         f = t;
@@ -292,7 +292,7 @@ void codal::scheduler_event(Event evt)
         messageBus->ignore(evt.source, evt.value, scheduler_event);
 }
 
-static Fiber* handle_fob()
+static Fiber *handle_fob()
 {
     Fiber *f = currentFiber;
 
@@ -306,9 +306,10 @@ static Fiber* handle_fob()
         if (!forkedFiber)
             forkedFiber = getFiberContext();
 
-         // If we're out of memory, there's nothing we can do.
+        // If we're out of memory, there's nothing we can do.
         // keep running in the context of the current thread as a best effort.
-        if (forkedFiber != NULL) {
+        if (forkedFiber != NULL)
+        {
 #if CONFIG_ENABLED(DEVICE_FIBER_USER_DATA)
             forkedFiber->user_data = f->user_data;
             f->user_data = NULL;
@@ -347,7 +348,7 @@ int codal::fiber_wait_for_event(uint16_t id, uint16_t value)
 {
     int ret = fiber_wake_on_event(id, value);
 
-    if(ret == DEVICE_OK)
+    if (ret == DEVICE_OK)
         schedule();
 
     return ret;
@@ -394,7 +395,7 @@ int codal::invoke(void (*entry_fn)(void))
 
     if (currentFiber->flags & (DEVICE_FIBER_FLAG_FOB | DEVICE_FIBER_FLAG_PARENT | DEVICE_FIBER_FLAG_CHILD) || HAS_THREAD_USER_DATA)
     {
-        // If we attempt a fork on block whilst already in a fork on block context, or if the thread 
+        // If we attempt a fork on block whilst already in a fork on block context, or if the thread
         // already has user data set, simply launch a fiber to deal with the request and we're done.
         create_fiber(entry_fn);
         return DEVICE_OK;
@@ -421,9 +422,9 @@ int codal::invoke(void (*entry_fn)(void))
     // spawn a thread to deal with it.
     currentFiber->flags |= DEVICE_FIBER_FLAG_FOB;
     entry_fn();
-    #if CONFIG_ENABLED(DEVICE_FIBER_USER_DATA)
+#if CONFIG_ENABLED(DEVICE_FIBER_USER_DATA)
     currentFiber->user_data = NULL;
-    #endif
+#endif
     currentFiber->flags &= ~DEVICE_FIBER_FLAG_FOB;
 
     // If this is is an exiting fiber that for spawned to handle a blocking call, recycle it.
@@ -431,7 +432,7 @@ int codal::invoke(void (*entry_fn)(void))
     if (currentFiber->flags & DEVICE_FIBER_FLAG_CHILD)
         release_fiber();
 
-     return DEVICE_OK;
+    return DEVICE_OK;
 }
 
 int codal::invoke(void (*entry_fn)(void *), void *param)
@@ -445,7 +446,7 @@ int codal::invoke(void (*entry_fn)(void *), void *param)
 
     if (currentFiber->flags & (DEVICE_FIBER_FLAG_FOB | DEVICE_FIBER_FLAG_PARENT | DEVICE_FIBER_FLAG_CHILD) || HAS_THREAD_USER_DATA)
     {
-        // If we attempt a fork on block whilst already in a fork on block context, or if the thread 
+        // If we attempt a fork on block whilst already in a fork on block context, or if the thread
         // already has user data set, simply launch a fiber to deal with the request and we're done.
         create_fiber(entry_fn, param);
         return DEVICE_OK;
@@ -472,9 +473,9 @@ int codal::invoke(void (*entry_fn)(void *), void *param)
     // spawn a thread to deal with it.
     currentFiber->flags |= DEVICE_FIBER_FLAG_FOB;
     entry_fn(param);
-    #if CONFIG_ENABLED(DEVICE_FIBER_USER_DATA)
+#if CONFIG_ENABLED(DEVICE_FIBER_USER_DATA)
     currentFiber->user_data = NULL;
-    #endif
+#endif
     currentFiber->flags &= ~DEVICE_FIBER_FLAG_FOB;
 
     // If this is is an exiting fiber that for spawned to handle a blocking call, recycle it.
@@ -509,7 +510,6 @@ void codal::launch_new_fiber_param(void (*ep)(void *), void (*cp)(void *), void 
     release_fiber(pm);
 }
 
-
 Fiber *__create_fiber(uint32_t ep, uint32_t cp, uint32_t pm, int parameterised)
 {
     // Validate our parameters.
@@ -526,7 +526,7 @@ Fiber *__create_fiber(uint32_t ep, uint32_t cp, uint32_t pm, int parameterised)
 
     tcb_configure_args(newFiber->tcb, ep, cp, pm);
     tcb_configure_sp(newFiber->tcb, INITIAL_STACK_DEPTH);
-    tcb_configure_lr(newFiber->tcb, parameterised ? (PROCESSOR_WORD_TYPE) &launch_new_fiber_param : (PROCESSOR_WORD_TYPE) &launch_new_fiber);
+    tcb_configure_lr(newFiber->tcb, parameterised ? (PROCESSOR_WORD_TYPE)&launch_new_fiber_param : (PROCESSOR_WORD_TYPE)&launch_new_fiber);
 
     // Add new fiber to the run queue.
     queue_fiber(newFiber, &runQueue);
@@ -539,7 +539,7 @@ Fiber *codal::create_fiber(void (*entry_fn)(void), void (*completion_fn)(void))
     if (!fiber_scheduler_running())
         return NULL;
 
-    return __create_fiber((uint32_t) entry_fn, (uint32_t)completion_fn, 0, 0);
+    return __create_fiber((uint32_t)entry_fn, (uint32_t)completion_fn, 0, 0);
 }
 
 Fiber *codal::create_fiber(void (*entry_fn)(void *), void *param, void (*completion_fn)(void *))
@@ -547,7 +547,7 @@ Fiber *codal::create_fiber(void (*entry_fn)(void *), void *param, void (*complet
     if (!fiber_scheduler_running())
         return NULL;
 
-    return __create_fiber((uint32_t) entry_fn, (uint32_t)completion_fn, (uint32_t) param, 1);
+    return __create_fiber((uint32_t)entry_fn, (uint32_t)completion_fn, (uint32_t)param, 1);
 }
 
 void codal::release_fiber(void *)
@@ -572,8 +572,10 @@ void codal::release_fiber(void)
 
     // limit the number of fibers in the pool
     int numFree = 0;
-    for (Fiber *p = fiberPool; p; p = p->qnext) {
-        if (!p->qnext && numFree > 3) {
+    for (Fiber *p = fiberPool; p; p = p->qnext)
+    {
+        if (!p->qnext && numFree > 3)
+        {
             p->qprev->qnext = NULL;
             free(p->tcb);
             free((void *)p->stack_bottom);
@@ -735,8 +737,7 @@ void codal::schedule()
         do
         {
             idle();
-        }
-        while (runQueue == NULL);
+        } while (runQueue == NULL);
 
         // Switch to a non-idle fiber.
         // If this fiber is the same as the old one then there'll be no switching at all.
@@ -778,14 +779,14 @@ void codal::idle()
     // We will return to idle after processing any idle events that add anything
     // to our run queue, we use the DEVICE_SCHEDULER_IDLE flag to determine this
     // scenario.
-    if(!(fiber_flags & DEVICE_SCHEDULER_IDLE))
+    if (!(fiber_flags & DEVICE_SCHEDULER_IDLE))
     {
         fiber_flags |= DEVICE_SCHEDULER_IDLE;
         Event(DEVICE_ID_SCHEDULER, DEVICE_SCHEDULER_EVT_IDLE);
     }
 
     // If the above did create any useful work, enter power efficient sleep.
-    if(scheduler_runqueue_empty())
+    if (scheduler_runqueue_empty())
     {
         // unset our DEVICE_SCHEDULER_IDLE flag, we have processed all of the events
         // because we enforce MESSAGE_BUS_LISTENER_IMMEDIATE for listeners placed
@@ -797,7 +798,7 @@ void codal::idle()
 
 void codal::idle_task()
 {
-    while(1)
+    while (1)
     {
         idle();
         schedule();
@@ -809,22 +810,21 @@ int codal::fiber_scheduler_get_deepsleep_pending()
     return fiber_flags & DEVICE_SCHEDULER_DEEPSLEEP ? 1 : 0;
 }
 
-void codal::fiber_scheduler_set_deepsleep_pending( int pending)
+void codal::fiber_scheduler_set_deepsleep_pending(int pending)
 {
-    if ( pending)
+    if (pending)
         fiber_flags |= DEVICE_SCHEDULER_DEEPSLEEP;
     else
         fiber_flags &= ~DEVICE_SCHEDULER_DEEPSLEEP;
 }
 
-FiberLock::FiberLock( int initial, FiberLockMode mode )
+FiberLock::FiberLock(int initial, FiberLockMode mode)
 {
     this->queue = NULL;
     this->locked = initial;
     this->resetTo = initial;
     this->mode = mode;
 }
-
 
 REAL_TIME_FUNC
 void FiberLock::wait()
@@ -837,7 +837,7 @@ void FiberLock::wait()
     int l = --locked;
     target_enable_irq();
 
-    //DMESGF( "%d, wait(%d)", (uint32_t)this & 0xFFFF, locked );
+    // DMESGF( "%d, wait(%d)", (uint32_t)this & 0xFFFF, locked );
 
     if (l < 0)
     {
@@ -874,7 +874,7 @@ void FiberLock::wait()
 void FiberLock::notify()
 {
     locked++;
-    //DMESGF( "%d, notify(%d)", (uint32_t)this & 0xFFFF, locked );
+    // DMESGF( "%d, notify(%d)", (uint32_t)this & 0xFFFF, locked );
     Fiber *f = queue;
     if (f)
     {
@@ -885,7 +885,7 @@ void FiberLock::notify()
 
 void FiberLock::notifyAll()
 {
-    //DMESGF( "%d, notifyAll(%d)", (uint32_t)this & 0xFFFF, locked );
+    // DMESGF( "%d, notifyAll(%d)", (uint32_t)this & 0xFFFF, locked );
     Fiber *f = queue;
     while (f)
     {
@@ -893,15 +893,15 @@ void FiberLock::notifyAll()
         f = queue;
     }
 
-    if( this->mode == FiberLockMode::MUTEX )
+    if (this->mode == FiberLockMode::MUTEX)
         this->locked = this->resetTo;
 
-    //DMESGF( "%d, { notifyAll(%d) }", (uint32_t)this & 0xFFFF, locked );
+    // DMESGF( "%d, { notifyAll(%d) }", (uint32_t)this & 0xFFFF, locked );
 }
 
 int FiberLock::getWaitCount()
 {
-    if( locked > -1 )
+    if (locked > -1)
         return 0;
     return 0 - locked;
 }

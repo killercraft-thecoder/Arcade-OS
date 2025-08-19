@@ -72,12 +72,12 @@ DEALINGS IN THE SOFTWARE.
 #define CPU_TO_LE32(x) (x)
 #define le32_to_cpu(x) (x)
 
-#define SCSI_SET_SENSE(Key, Acode, Aqual)                                                          \
-    do                                                                                             \
-    {                                                                                              \
-        state->SenseData.SenseKey = (Key);                                                         \
-        state->SenseData.AdditionalSenseCode = (Acode);                                            \
-        state->SenseData.AdditionalSenseQualifier = (Aqual);                                       \
+#define SCSI_SET_SENSE(Key, Acode, Aqual)                    \
+    do                                                       \
+    {                                                        \
+        state->SenseData.SenseKey = (Key);                   \
+        state->SenseData.AdditionalSenseCode = (Acode);      \
+        state->SenseData.AdditionalSenseQualifier = (Aqual); \
     } while (0)
 
 static inline uint32_t CPU_TO_BE32(uint32_t v)
@@ -97,12 +97,12 @@ static inline uint16_t read32(uint8_t *p)
 
 namespace codal
 {
-struct MSCState
-{
-    MS_CommandBlockWrapper_t CommandBlock;
-    MS_CommandStatusWrapper_t CommandStatus;
-    SCSI_Request_Sense_Response_t SenseData;
-};
+    struct MSCState
+    {
+        MS_CommandBlockWrapper_t CommandBlock;
+        MS_CommandStatusWrapper_t CommandStatus;
+        SCSI_Request_Sense_Response_t SenseData;
+    };
 }
 
 using namespace codal;
@@ -233,8 +233,8 @@ int USBMSC::handeSCSICommand()
 {
     bool ok = false;
 
-    //LOG("SCSI CMD %x %x:%x", state->CommandBlock.SCSICommandData[0],
-    //    state->CommandBlock.SCSICommandData[1], state->CommandBlock.SCSICommandData[2]);
+    // LOG("SCSI CMD %x %x:%x", state->CommandBlock.SCSICommandData[0],
+    //     state->CommandBlock.SCSICommandData[1], state->CommandBlock.SCSICommandData[2]);
 
     /* Run the appropriate SCSI command hander function based on the passed command */
     switch (state->CommandBlock.SCSICommandData[0])

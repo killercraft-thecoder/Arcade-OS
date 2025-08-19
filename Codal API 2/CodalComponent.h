@@ -150,8 +150,8 @@ namespace codal
      * static method allows application code to request a safe (unused) globally unique ID for
      * this purpose.
      *
-     * This currently creates monotonically incrementing IDs, with no reuse. When they're gone
-     * they're gone!
+     * This currently creates monotonically incrementing IDs, with some reuse. When they're gone
+     * they're gone until you unregister them!
      *
      * @note While currently monotonic, this may change in the future for more complex schemes.
      *

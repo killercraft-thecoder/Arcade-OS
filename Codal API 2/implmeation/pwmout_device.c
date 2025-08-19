@@ -36,42 +36,41 @@
 #endif
 
 const pwm_apb_map_t pwm_apb_map_table[] =
-{
+    {
 #if defined(TIM2_BASE)
-    {TIM2_BASE, PWMOUT_ON_APB1},
+        {TIM2_BASE, PWMOUT_ON_APB1},
 #endif
 #if defined(TIM3_BASE)
-    {TIM3_BASE, PWMOUT_ON_APB1},
+        {TIM3_BASE, PWMOUT_ON_APB1},
 #endif
 #if defined(TIM4_BASE)
-    {TIM4_BASE, PWMOUT_ON_APB1},
+        {TIM4_BASE, PWMOUT_ON_APB1},
 #endif
 #if defined(TIM5_BASE)
-    {TIM5_BASE, PWMOUT_ON_APB1},
+        {TIM5_BASE, PWMOUT_ON_APB1},
 #endif
 #if defined(TIM12_BASE)
-    {TIM12_BASE, PWMOUT_ON_APB1},
+        {TIM12_BASE, PWMOUT_ON_APB1},
 #endif
 #if defined(TIM13_BASE)
-    {TIM13_BASE, PWMOUT_ON_APB1},
+        {TIM13_BASE, PWMOUT_ON_APB1},
 #endif
 #if defined(TIM14_BASE)
-    {TIM14_BASE, PWMOUT_ON_APB1},
+        {TIM14_BASE, PWMOUT_ON_APB1},
 #endif
 #if defined(TIM1_BASE)
-    {TIM1_BASE, PWMOUT_ON_APB2},
+        {TIM1_BASE, PWMOUT_ON_APB2},
 #endif
 #if defined(TIM8_BASE)
-    {TIM8_BASE, PWMOUT_ON_APB2},
+        {TIM8_BASE, PWMOUT_ON_APB2},
 #endif
 #if defined(TIM9_BASE)
-    {TIM9_BASE, PWMOUT_ON_APB2},
+        {TIM9_BASE, PWMOUT_ON_APB2},
 #endif
 #if defined(TIM10_BASE)
-    {TIM10_BASE, PWMOUT_ON_APB2},
+        {TIM10_BASE, PWMOUT_ON_APB2},
 #endif
 #if defined(TIM11_BASE)
-    {TIM11_BASE, PWMOUT_ON_APB2},
+        {TIM11_BASE, PWMOUT_ON_APB2},
 #endif
-    {0, PWMOUT_UNKNOWN}
-};
+        {0, PWMOUT_UNKNOWN}};

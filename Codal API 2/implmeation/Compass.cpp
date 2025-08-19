@@ -55,7 +55,7 @@ Compass::Compass(CoordinateSpace &cspace, uint16_t id) : sample(), sampleENU(), 
  * @param coordinateSpace the orientation of the sensor. Defaults to: SIMPLE_CARTESIAN
  *
  */
-Compass::Compass(Accelerometer &accel, CoordinateSpace &cspace, uint16_t id) :  sample(), sampleENU(), coordinateSpace(cspace)
+Compass::Compass(Accelerometer &accel, CoordinateSpace &cspace, uint16_t id) : sample(), sampleENU(), coordinateSpace(cspace)
 {
     accelerometer = &accel;
     _init(id);
@@ -82,7 +82,6 @@ void Compass::_init(uint16_t id)
     status |= DEVICE_COMPONENT_RUNNING;
 }
 
-
 /**
  * Gets the current heading of the device, relative to magnetic north.
  *
@@ -100,13 +99,13 @@ void Compass::_init(uint16_t id)
  */
 int Compass::heading()
 {
-    if(status & COMPASS_STATUS_CALIBRATING)
+    if (status & COMPASS_STATUS_CALIBRATING)
         return DEVICE_CALIBRATION_IN_PROGRESS;
 
-    if(!(status & COMPASS_STATUS_CALIBRATED))
+    if (!(status & COMPASS_STATUS_CALIBRATED))
         calibrate();
 
-    if(accelerometer != NULL)
+    if (accelerometer != NULL)
         return tiltCompensatedBearing();
 
     return basicBearing();
@@ -129,7 +128,7 @@ int Compass::getFieldStrength()
     double y = s.y;
     double z = s.z;
 
-    return (int) sqrt(x*x + y*y + z*z);
+    return (int)sqrt(x * x + y * y + z * z);
 }
 
 /**
@@ -148,7 +147,7 @@ int Compass::getFieldStrength()
 int Compass::calibrate()
 {
     // Only perform one calibration process at a time.
-    if(isCalibrating())
+    if (isCalibrating())
         return DEVICE_CALIBRATION_IN_PROGRESS;
 
     requestUpdate();
@@ -166,7 +165,7 @@ int Compass::calibrate()
     status &= ~COMPASS_STATUS_CALIBRATING;
 
     // If there are no changes to our sample data, we either have no calibration algorithm, or it couldn't complete succesfully.
-    if(!(status & COMPASS_STATUS_CALIBRATED))
+    if (!(status & COMPASS_STATUS_CALIBRATED))
         return DEVICE_CALIBRATION_REQUIRED;
 
     return DEVICE_OK;
@@ -256,7 +255,6 @@ int Compass::setPeriod(int period)
 
     samplePeriod = getPeriod();
     return result;
-
 }
 
 /**
@@ -366,9 +364,9 @@ int Compass::tiltCompensatedBearing()
 
     Sample3D s = getSample(NORTH_EAST_DOWN);
 
-    float x = (float) s.x;
-    float y = (float) s.y;
-    float z = (float) s.z;
+    float x = (float)s.x;
+    float y = (float)s.y;
+    float z = (float)s.z;
 
     // Precompute cos and sin of pitch and roll angles to make the calculation a little more efficient.
     float sinPhi = sinf(phi);
@@ -376,8 +374,8 @@ int Compass::tiltCompensatedBearing()
     float sinTheta = sinf(theta);
     float cosTheta = cosf(theta);
 
-     // Calculate the tilt compensated bearing, and convert to degrees.
-    float bearing = (360.0f*atan2f(x*cosTheta + y*sinTheta*sinPhi + z*sinTheta*cosPhi, z*sinPhi - y*cosPhi)) / (2.0f*(float)PI);
+    // Calculate the tilt compensated bearing, and convert to degrees.
+    float bearing = (360.0f * atan2f(x * cosTheta + y * sinTheta * sinPhi + z * sinTheta * cosPhi, z * sinPhi - y * cosPhi)) / (2.0f * (float)PI);
 
     // Handle the 90 degree offset caused by the NORTH_EAST_DOWN based calculation.
     bearing = 90.0f - bearing;
@@ -386,7 +384,7 @@ int Compass::tiltCompensatedBearing()
     if (bearing < 0)
         bearing += 360.0f;
 
-    return (int) (bearing);
+    return (int)(bearing);
 }
 
 /**
@@ -396,10 +394,10 @@ int Compass::basicBearing()
 {
     // Convert to floating point to reduce rounding errors
     Sample3D cs = this->getSample(SIMPLE_CARTESIAN);
-    float x = (float) cs.x;
-    float y = (float) cs.y;
+    float x = (float)cs.x;
+    float y = (float)cs.y;
 
-    float bearing = (atan2f(x,y))*180.0f/(float)PI;
+    float bearing = (atan2f(x, y)) * 180.0f / (float)PI;
 
     if (bearing < 0)
         bearing += 360.0f;
@@ -408,10 +406,8 @@ int Compass::basicBearing()
 }
 
 /**
-  * Destructor.
-  */
+ * Destructor.
+ */
 Compass::~Compass()
 {
 }
-
-

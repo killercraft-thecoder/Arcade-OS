@@ -4,7 +4,7 @@
 
 using namespace codal;
 
-STMLowLevelTimer* instances[5] = { 0 };
+STMLowLevelTimer *instances[5] = {0};
 
 void timer_irq_handler(uint8_t index)
 {
@@ -13,7 +13,7 @@ void timer_irq_handler(uint8_t index)
 
     uint16_t channel_bitmsk = 0;
 
-    TIM_HandleTypeDef* timHandle = &instances[index]->TimHandle;
+    TIM_HandleTypeDef *timHandle = &instances[index]->TimHandle;
 
     if (__HAL_TIM_GET_IT_SOURCE(timHandle, TIM_FLAG_CC1) == SET)
     {
@@ -63,7 +63,7 @@ extern "C" void TIM5_IRQHandler()
     timer_irq_handler(4);
 }
 
-STMLowLevelTimer::STMLowLevelTimer(TIM_TypeDef* timer, uint8_t irqn) : LowLevelTimer(4)
+STMLowLevelTimer::STMLowLevelTimer(TIM_TypeDef *timer, uint8_t irqn) : LowLevelTimer(4)
 {
     enable_tim_clk((uint32_t)timer);
 
@@ -77,7 +77,7 @@ STMLowLevelTimer::STMLowLevelTimer(TIM_TypeDef* timer, uint8_t irqn) : LowLevelT
 
     TimHandle.Instance = this->timer_instance;
     TimHandle.Init.Period = 0xFFFFFFFF;
-    TimHandle.Init.Prescaler = (uint32_t)((SystemCoreClock / 1000000)-1);
+    TimHandle.Init.Prescaler = (uint32_t)((SystemCoreClock / 1000000) - 1);
     TimHandle.Init.ClockDivision = 0;
     TimHandle.Init.CounterMode = TIM_COUNTERMODE_UP;
     HAL_TIM_OC_Init(&TimHandle);

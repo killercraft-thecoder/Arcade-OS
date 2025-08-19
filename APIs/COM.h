@@ -3,7 +3,8 @@
 
 // No need to include SPI.cpp here; only COM.cpp should include COM.h
 
-namespace COM {
+namespace COM
+{
     const int SPI_FREQUENCY = 2300;
 
     /**

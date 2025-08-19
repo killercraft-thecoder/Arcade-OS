@@ -30,15 +30,14 @@ DEALINGS IN THE SOFTWARE.
 
 using namespace codal;
 
-
 /**
-  * Constructor.
-  * Create a software abstraction of an FXSO8700 combined accelerometer/magnetometer
-  *
-  * @param _i2c an instance of I2C used to communicate with the device.
-  *
-  * @param address the default I2C address of the accelerometer. Defaults to: FXS8700_DEFAULT_ADDR.
-  *
+ * Constructor.
+ * Create a software abstraction of an FXSO8700 combined accelerometer/magnetometer
+ *
+ * @param _i2c an instance of I2C used to communicate with the device.
+ *
+ * @param address the default I2C address of the accelerometer. Defaults to: FXS8700_DEFAULT_ADDR.
+ *
  */
 Accelerometer::Accelerometer(CoordinateSpace &cspace, uint16_t id) : sample(), sampleENU(), coordinateSpace(cspace)
 {
@@ -67,17 +66,17 @@ Accelerometer::Accelerometer(CoordinateSpace &cspace, uint16_t id) : sample(), s
 }
 
 /**
-  * Stores data from the accelerometer sensor in our buffer, and perform gesture tracking.
-  *
-  * On first use, this member function will attempt to add this component to the
-  * list of fiber components in order to constantly update the values stored
-  * by this object.
-  *
-  * This lazy instantiation means that we do not
-  * obtain the overhead from non-chalantly adding this component to fiber components.
-  *
-  * @return DEVICE_OK on success, DEVICE_I2C_ERROR if the read request fails.
-  */
+ * Stores data from the accelerometer sensor in our buffer, and perform gesture tracking.
+ *
+ * On first use, this member function will attempt to add this component to the
+ * list of fiber components in order to constantly update the values stored
+ * by this object.
+ *
+ * This lazy instantiation means that we do not
+ * obtain the overhead from non-chalantly adding this component to fiber components.
+ *
+ * @return DEVICE_OK on success, DEVICE_I2C_ERROR if the read request fails.
+ */
 int Accelerometer::update()
 {
     // Store the new data, after performing any necessary coordinate transformations.
@@ -96,18 +95,18 @@ int Accelerometer::update()
 };
 
 /**
-  * A service function.
-  * It calculates the current scalar acceleration of the device (x^2 + y^2 + z^2).
-  * It does not, however, square root the result, as this is a relatively high cost operation.
-  *
-  * This is left to application code should it be needed.
-  *
-  * @return the sum of the square of the acceleration of the device across all axes.
-  */
+ * A service function.
+ * It calculates the current scalar acceleration of the device (x^2 + y^2 + z^2).
+ * It does not, however, square root the result, as this is a relatively high cost operation.
+ *
+ * This is left to application code should it be needed.
+ *
+ * @return the sum of the square of the acceleration of the device across all axes.
+ */
 uint32_t Accelerometer::instantaneousAccelerationSquared()
 {
     // Use pythagoras theorem to determine the combined force acting on the device.
-    return (uint32_t)sample.x*(uint32_t)sample.x + (uint32_t)sample.y*(uint32_t)sample.y + (uint32_t)sample.z*(uint32_t)sample.z;
+    return (uint32_t)sample.x * (uint32_t)sample.x + (uint32_t)sample.y * (uint32_t)sample.y + (uint32_t)sample.z * (uint32_t)sample.z;
 }
 
 /**
@@ -211,9 +210,9 @@ uint16_t Accelerometer::instantaneousPosture()
 }
 
 /**
-  * Updates the basic gesture recognizer. This performs instantaneous pose recognition, and also some low pass filtering to promote
-  * stability.
-  */
+ * Updates the basic gesture recognizer. This performs instantaneous pose recognition, and also some low pass filtering to promote
+ * stability.
+ */
 void Accelerometer::updateGesture()
 {
     // Check for High/Low G force events - typically impulses, impacts etc.
@@ -226,7 +225,7 @@ void Accelerometer::updateGesture()
         if (force > ACCELEROMETER_2G_THRESHOLD && !shake.impulse_2)
         {
             Event e(DEVICE_ID_GESTURE, ACCELEROMETER_EVT_2G);
-            shake.impulse_2 = 1;            
+            shake.impulse_2 = 1;
         }
         if (force > ACCELEROMETER_3G_THRESHOLD && !shake.impulse_3)
         {
@@ -252,7 +251,6 @@ void Accelerometer::updateGesture()
         impulseSigma++;
     else
         shake.impulse_2 = shake.impulse_3 = shake.impulse_6 = shake.impulse_8 = 0;
-
 
     // Determine what it looks like we're doing based on the latest sample...
     uint16_t g = instantaneousPosture();
@@ -285,20 +283,20 @@ void Accelerometer::updateGesture()
 }
 
 /**
-  * Attempts to set the sample rate of the accelerometer to the specified value (in ms).
-  *
-  * @param period the requested time between samples, in milliseconds.
-  *
-  * @return DEVICE_OK on success, DEVICE_I2C_ERROR is the request fails.
-  *
-  * @code
-  * // sample rate is now 20 ms.
-  * accelerometer.setPeriod(20);
-  * @endcode
-  *
-  * @note The requested rate may not be possible on the hardware. In this case, the
-  * nearest lower rate is chosen.
-  */
+ * Attempts to set the sample rate of the accelerometer to the specified value (in ms).
+ *
+ * @param period the requested time between samples, in milliseconds.
+ *
+ * @return DEVICE_OK on success, DEVICE_I2C_ERROR is the request fails.
+ *
+ * @code
+ * // sample rate is now 20 ms.
+ * accelerometer.setPeriod(20);
+ * @endcode
+ *
+ * @note The requested rate may not be possible on the hardware. In this case, the
+ * nearest lower rate is chosen.
+ */
 int Accelerometer::setPeriod(int period)
 {
     int result;
@@ -308,34 +306,33 @@ int Accelerometer::setPeriod(int period)
 
     samplePeriod = getPeriod();
     return result;
-
 }
 
 /**
-  * Reads the currently configured sample rate of the accelerometer.
-  *
-  * @return The time between samples, in milliseconds.
-  */
+ * Reads the currently configured sample rate of the accelerometer.
+ *
+ * @return The time between samples, in milliseconds.
+ */
 int Accelerometer::getPeriod()
 {
     return (int)samplePeriod;
 }
 
 /**
-  * Attempts to set the sample range of the accelerometer to the specified value (in g).
-  *
-  * @param range The requested sample range of samples, in g.
-  *
-  * @return DEVICE_OK on success, DEVICE_I2C_ERROR is the request fails.
-  *
-  * @code
-  * // the sample range of the accelerometer is now 8G.
-  * accelerometer.setRange(8);
-  * @endcode
-  *
-  * @note The requested range may not be possible on the hardware. In this case, the
-  * nearest lower range is chosen.
-  */
+ * Attempts to set the sample range of the accelerometer to the specified value (in g).
+ *
+ * @param range The requested sample range of samples, in g.
+ *
+ * @return DEVICE_OK on success, DEVICE_I2C_ERROR is the request fails.
+ *
+ * @code
+ * // the sample range of the accelerometer is now 8G.
+ * accelerometer.setRange(8);
+ * @endcode
+ *
+ * @note The requested range may not be possible on the hardware. In this case, the
+ * nearest lower range is chosen.
+ */
 int Accelerometer::setRange(int range)
 {
     int result;
@@ -348,10 +345,10 @@ int Accelerometer::setRange(int range)
 }
 
 /**
-  * Reads the currently configured sample range of the accelerometer.
-  *
-  * @return The sample range, in g.
-  */
+ * Reads the currently configured sample range of the accelerometer.
+ *
+ * @return The sample range, in g.
+ */
 int Accelerometer::getRange()
 {
     return (int)sampleRange;
@@ -416,28 +413,28 @@ int Accelerometer::getZ()
 }
 
 /**
-  * Provides a rotation compensated pitch of the device, based on the latest update retrieved from the accelerometer.
-  *
-  * @return The pitch of the device, in degrees.
-  *
-  * @code
-  * accelerometer.getPitch();
-  * @endcode
-  */
+ * Provides a rotation compensated pitch of the device, based on the latest update retrieved from the accelerometer.
+ *
+ * @return The pitch of the device, in degrees.
+ *
+ * @code
+ * accelerometer.getPitch();
+ * @endcode
+ */
 int Accelerometer::getPitch()
 {
-    return (int) ((360.0f*getPitchRadians()) / (2.0f*(float)PI));
+    return (int)((360.0f * getPitchRadians()) / (2.0f * (float)PI));
 }
 
 /**
-  * Provides a rotation compensated pitch of the device, based on the latest update retrieved from the accelerometer.
-  *
-  * @return The pitch of the device, in radians.
-  *
-  * @code
-  * accelerometer.getPitchRadians();
-  * @endcode
-  */
+ * Provides a rotation compensated pitch of the device, based on the latest update retrieved from the accelerometer.
+ *
+ * @return The pitch of the device, in radians.
+ *
+ * @code
+ * accelerometer.getPitchRadians();
+ * @endcode
+ */
 float Accelerometer::getPitchRadians()
 {
     requestUpdate();
@@ -448,28 +445,28 @@ float Accelerometer::getPitchRadians()
 }
 
 /**
-  * Provides a rotation compensated roll of the device, based on the latest update retrieved from the accelerometer.
-  *
-  * @return The roll of the device, in degrees.
-  *
-  * @code
-  * accelerometer.getRoll();
-  * @endcode
-  */
+ * Provides a rotation compensated roll of the device, based on the latest update retrieved from the accelerometer.
+ *
+ * @return The roll of the device, in degrees.
+ *
+ * @code
+ * accelerometer.getRoll();
+ * @endcode
+ */
 int Accelerometer::getRoll()
 {
-    return (int) ((360.0f*getRollRadians()) / (2.0f*(float)PI));
+    return (int)((360.0f * getRollRadians()) / (2.0f * (float)PI));
 }
 
 /**
-  * Provides a rotation compensated roll of the device, based on the latest update retrieved from the accelerometer.
-  *
-  * @return The roll of the device, in radians.
-  *
-  * @code
-  * accelerometer.getRollRadians();
-  * @endcode
-  */
+ * Provides a rotation compensated roll of the device, based on the latest update retrieved from the accelerometer.
+ *
+ * @return The roll of the device, in radians.
+ *
+ * @code
+ * accelerometer.getRollRadians();
+ * @endcode
+ */
 float Accelerometer::getRollRadians()
 {
     requestUpdate();
@@ -480,19 +477,19 @@ float Accelerometer::getRollRadians()
 }
 
 /**
-  * Recalculate roll and pitch values for the current sample.
-  *
-  * @note We only do this at most once per sample, as the necessary trigonemteric functions are rather
-  *       heavyweight for a CPU without a floating point unit.
-  */
+ * Recalculate roll and pitch values for the current sample.
+ *
+ * @note We only do this at most once per sample, as the necessary trigonemteric functions are rather
+ *       heavyweight for a CPU without a floating point unit.
+ */
 void Accelerometer::recalculatePitchRoll()
 {
-    double x = (double) sample.x;
-    double y = (double) sample.y;
-    double z = (double) sample.z;
+    double x = (double)sample.x;
+    double y = (double)sample.y;
+    double z = (double)sample.z;
 
     roll = atan2(x, -z);
-    pitch = atan2(y, (x*sin(roll) - z*cos(roll)));
+    pitch = atan2(y, (x * sin(roll) - z * cos(roll)));
 
     // Handle to the two "negative quadrants", such that we get an output in the +/- 18- degree range.
     // This ensures that the pitch values are consistent with the roll values.
@@ -506,26 +503,25 @@ void Accelerometer::recalculatePitchRoll()
 }
 
 /**
-  * Retrieves the last recorded gesture.
-  *
-  * @return The last gesture that was detected.
-  *
-  * Example:
-  * @code
-  *
-  * if (accelerometer.getGesture() == SHAKE)
-  *     display.scroll("SHAKE!");
-  * @endcode
-  */
+ * Retrieves the last recorded gesture.
+ *
+ * @return The last gesture that was detected.
+ *
+ * Example:
+ * @code
+ *
+ * if (accelerometer.getGesture() == SHAKE)
+ *     display.scroll("SHAKE!");
+ * @endcode
+ */
 uint16_t Accelerometer::getGesture()
 {
     return lastGesture;
 }
 
 /**
-  * Destructor for FXS8700, where we deregister from the array of fiber components.
-  */
+ * Destructor for FXS8700, where we deregister from the array of fiber components.
+ */
 Accelerometer::~Accelerometer()
 {
 }
-

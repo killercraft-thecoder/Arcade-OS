@@ -10,8 +10,8 @@
 
 using namespace codal;
 
-#define TX_CONFIGURED       0x02
-#define RX_CONFIGURED       0x04
+#define TX_CONFIGURED 0x02
+#define RX_CONFIGURED 0x04
 
 uint8_t buffer[1024] = {0};
 uint16_t buffer_head = 0;
@@ -65,35 +65,35 @@ void ZSingleWireSerial::_complete(uint32_t instance, uint32_t mode)
         {
             switch (mode)
             {
-                case SWS_EVT_DATA_RECEIVED:
-                case SWS_EVT_DATA_SENT:
+            case SWS_EVT_DATA_RECEIVED:
+            case SWS_EVT_DATA_SENT:
+                if (instances[i]->cb)
+                    instances[i]->cb(mode);
+                break;
+
+            case SWS_EVT_ERROR:
+                err = HAL_UART_GetError(&instances[i]->uart);
+
+                // DMESG("HALE %d", err);
+
+                if (instances[i]->cb)
+                    instances[i]->cb(SWS_EVT_DATA_RECEIVED);
+                else if (err == HAL_UART_ERROR_FE)
+                    // a uart error disable any previously configured DMA transfers, we will always get a framing error...
+                    // quietly restart...
+                    HAL_UART_Receive_DMA(&instances[i]->uart, instances[i]->buf, instances[i]->bufLen);
+                else
+                {
                     if (instances[i]->cb)
                         instances[i]->cb(mode);
-                    break;
-
-                case SWS_EVT_ERROR:
-                    err = HAL_UART_GetError(&instances[i]->uart);
-
-                    // DMESG("HALE %d", err);
-
-                    if (instances[i]->cb)
-                        instances[i]->cb(SWS_EVT_DATA_RECEIVED);
-                    else if (err == HAL_UART_ERROR_FE)
-                        // a uart error disable any previously configured DMA transfers, we will always get a framing error...
-                        // quietly restart...
-                        HAL_UART_Receive_DMA(&instances[i]->uart, instances[i]->buf, instances[i]->bufLen);
                     else
-                    {
-                        if (instances[i]->cb)
-                            instances[i]->cb(mode);
-                        else
-                            HAL_UART_Abort(&instances[i]->uart);
-                    }
-                    break;
+                        HAL_UART_Abort(&instances[i]->uart);
+                }
+                break;
 
-                default:
-                    HAL_UART_IRQHandler(&instances[i]->uart);
-                    break;
+            default:
+                HAL_UART_IRQHandler(&instances[i]->uart);
+                break;
             }
         }
     }
@@ -114,7 +114,7 @@ extern "C" void HAL_UART_ErrorCallback(UART_HandleTypeDef *hspi)
     ZSingleWireSerial::_complete((uint32_t)hspi->Instance, SWS_EVT_ERROR);
 }
 
-#define DEFIRQ(nm, id)                                                                             \
+#define DEFIRQ(nm, id) \
     extern "C" void nm() { ZSingleWireSerial::_complete(id, 0); }
 
 DEFIRQ(USART1_IRQHandler, USART1_BASE)
@@ -123,12 +123,11 @@ DEFIRQ(USART2_IRQHandler, USART2_BASE)
 DEFIRQ(USART6_IRQHandler, USART6_BASE)
 #endif
 
-
 void ZSingleWireSerial::configureRxInterrupt(int enable)
 {
 }
 
-ZSingleWireSerial::ZSingleWireSerial(Pin& p) : DMASingleWireSerial(p)
+ZSingleWireSerial::ZSingleWireSerial(Pin &p) : DMASingleWireSerial(p)
 {
     ZERO(uart);
     ZERO(hdma_tx);
@@ -179,13 +178,13 @@ uint32_t ZSingleWireSerial::getBaud()
 
 int ZSingleWireSerial::putc(char c)
 {
-    return send((uint8_t*)&c, 1);
+    return send((uint8_t *)&c, 1);
 }
 
 int ZSingleWireSerial::getc()
 {
     char c = 0;
-    int res = receive((uint8_t*)&c, 1);
+    int res = receive((uint8_t *)&c, 1);
 
     if (res == DEVICE_OK)
         return c;
@@ -257,7 +256,7 @@ int ZSingleWireSerial::setMode(SingleWireMode sw)
     return DEVICE_OK;
 }
 
-int ZSingleWireSerial::send(uint8_t* data, int len)
+int ZSingleWireSerial::send(uint8_t *data, int len)
 {
     if (!(status & TX_CONFIGURED))
         setMode(SingleWireTx);
@@ -270,7 +269,7 @@ int ZSingleWireSerial::send(uint8_t* data, int len)
     return DEVICE_CANCELLED;
 }
 
-int ZSingleWireSerial::receive(uint8_t* data, int len)
+int ZSingleWireSerial::receive(uint8_t *data, int len)
 {
     if (!(status & RX_CONFIGURED))
         setMode(SingleWireRx);
@@ -283,7 +282,7 @@ int ZSingleWireSerial::receive(uint8_t* data, int len)
     return DEVICE_CANCELLED;
 }
 
-int ZSingleWireSerial::sendDMA(uint8_t* data, int len)
+int ZSingleWireSerial::sendDMA(uint8_t *data, int len)
 {
     if (!(status & TX_CONFIGURED))
         setMode(SingleWireTx);
@@ -301,7 +300,7 @@ int ZSingleWireSerial::sendDMA(uint8_t* data, int len)
     return DEVICE_OK;
 }
 
-int ZSingleWireSerial::receiveDMA(uint8_t* data, int len)
+int ZSingleWireSerial::receiveDMA(uint8_t *data, int len)
 {
     if (!(status & RX_CONFIGURED))
         setMode(SingleWireRx);
@@ -311,7 +310,7 @@ int ZSingleWireSerial::receiveDMA(uint8_t* data, int len)
 
     int res = HAL_UART_Receive_DMA(&uart, data, len);
     // see comment in sendDMA()
-     uart.hdmarx->Instance->FCR &= ~DMA_IT_FE;
+    uart.hdmarx->Instance->FCR &= ~DMA_IT_FE;
 
     // DMESG("RES %d",res);
     CODAL_ASSERT(res == HAL_OK, DEVICE_HARDWARE_CONFIGURATION_ERROR);

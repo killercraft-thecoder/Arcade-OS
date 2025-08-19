@@ -237,14 +237,15 @@ void ZPWM::irq(bool isHalf)
  */
 void ZPWM::enable()
 {
-    if (enabled) return; // Avoid re-enabling if already active
+    if (enabled)
+        return; // Avoid re-enabling if already active
 
     enabled = true;
 
     // Set initial duty cycle (optional, depending on your design)
     __HAL_TIM_SET_COMPARE(&tim, channel, initialDutyCycle); // e.g., 0 or some default
 
-   switch (channel)
+    switch (channel)
     {
     case TIM_CHANNEL_1:
         __HAL_TIM_DISABLE_DMA(&tim, TIM_DMA_CC1);
@@ -260,11 +261,9 @@ void ZPWM::enable()
         break;
     }
 
-
     // Start the timer in PWM mode
     HAL_TIM_PWM_Start(&tim, channel);
 }
-
 
 /**
  * Disable this component
@@ -289,5 +288,4 @@ void ZPWM::disable()
         __HAL_TIM_DISABLE_DMA(&tim, TIM_DMA_CC4);
         break;
     }
-
 }

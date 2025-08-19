@@ -1,12 +1,14 @@
 #include "COM.h"
-#include "SPI.cpp"  // Only needed here for implementation
+#include "SPI.cpp" // Only needed here for implementation
 
-namespace COM {
+namespace COM
+{
     // Define a fixed frequency
     const int SPI_FREQUENCY = 2300;
 
     // Initialize SPI
-    SPI_ initSPI(DigitalInOutPin mosiPin, DigitalInOutPin misoPin, DigitalInOutPin sckPin) {
+    SPI_ initSPI(DigitalInOutPin mosiPin, DigitalInOutPin misoPin, DigitalInOutPin sckPin)
+    {
         // Create an SPI object using your SPI API
         SPI_ spi = pins::createSPI(mosiPin, misoPin, sckPin);
 
@@ -20,28 +22,34 @@ namespace COM {
     }
 
     // Send data through SPI
-    int sendData(SPI_ spi, int value) {
-        if (!spi) {
-            soft_panic(PANIC_CAST_FROM_NULL);  // Handle null pointer
+    int sendData(SPI_ spi, int value)
+    {
+        if (!spi)
+        {
+            soft_panic(PANIC_CAST_FROM_NULL); // Handle null pointer
             return -1;
         }
 
-        return spi->write(value);  // Write the value to SPI
+        return spi->write(value); // Write the value to SPI
     }
 
     // Transfer data (send and receive simultaneously)
-    void transferData(SPI_ spi, Buffer command, Buffer response) {
-        if (!spi) {
-            soft_panic(PANIC_CAST_FROM_NULL);  // Handle null pointer
+    void transferData(SPI_ spi, Buffer command, Buffer response)
+    {
+        if (!spi)
+        {
+            soft_panic(PANIC_CAST_FROM_NULL); // Handle null pointer
             return;
         }
 
-        spi->transfer(command, response);  // Perform full-duplex SPI transfer
+        spi->transfer(command, response); // Perform full-duplex SPI transfer
     }
 
     // Close the SPI interface
-    void closeSPI(SPI_ spi) {
-        if (spi) {
+    void closeSPI(SPI_ spi)
+    {
+        if (spi)
+        {
             // Reset SPI or perform cleanup if necessary
             spi = nullptr;
         }

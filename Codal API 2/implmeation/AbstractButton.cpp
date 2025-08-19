@@ -76,7 +76,6 @@ void AbstractButton::disable()
     status &= ~DEVICE_COMPONENT_RUNNING;
 }
 
-
 /**
  * Destructor
  */
