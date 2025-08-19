@@ -64,7 +64,8 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "pwmout_device.h": "c",
-        "stm32f4xx_hal.h": "c"
+        "stm32f4xx_hal.h": "c",
+        "stm32f4xx_ll_i2c.h": "c"
     },
     "editor.formatOnSave": true
 }
