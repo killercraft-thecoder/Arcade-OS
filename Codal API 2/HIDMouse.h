@@ -31,23 +31,27 @@ DEALINGS IN THE SOFTWARE.
 
 namespace codal
 {
-    typedef enum {
+    typedef enum
+    {
         HID_MOUSE_LEFT = 0x01,
         HID_MOUSE_RIGHT = 0x02,
         HID_MOUSE_MIDDLE = 0x04,
     } USBHIDMouseButton;
 
-    typedef union {
-        struct {
-            bool rightButton:1;
-            bool middleButton:1;
-            bool leftButton:1;
-            uint8_t reserved:5;
+    typedef union
+    {
+        struct
+        {
+            bool rightButton : 1;
+            bool middleButton : 1;
+            bool leftButton : 1;
+            uint8_t reserved : 5;
         } bit;
         uint8_t reg;
     } HIDMouseButtons;
 
-    typedef struct {
+    typedef struct
+    {
         HIDMouseButtons buttons;
 
         int8_t xMovement;
@@ -59,10 +63,10 @@ namespace codal
     class USBHIDMouse : public USBHID
     {
 
-public:
+    public:
         USBHIDMouse();
 
-        virtual int stdRequest(UsbEndpointIn &ctrl, USBSetup& setup);
+        virtual int stdRequest(UsbEndpointIn &ctrl, USBSetup &setup);
         virtual const InterfaceInfo *getInterfaceInfo();
 
         int buttonDown(USBHIDMouseButton b);
@@ -71,11 +75,10 @@ public:
         int move(int8_t x, int8_t y);
         int moveWheel(int8_t w);
 
-private:
+    private:
         int sendReport();
     };
 }
-
 
 #endif
 

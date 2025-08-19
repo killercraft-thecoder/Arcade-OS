@@ -50,7 +50,8 @@ namespace codal
         SIZE_4GB
     };
 
-    enum class MPU_STATE : uint8_t {
+    enum class MPU_STATE : uint8_t
+    {
         // the MPU is okay.
         MPU_OK,
         // the wanted operation is not allowed by the MPU
@@ -63,7 +64,10 @@ namespace codal
     public:
         static inline int enable(bool privilegedDefault = true)
         {
-            if (this->isPrivileged() == false) {return MPU_STATE::MPU_OPERATION_NOT_ALLOWED}
+            if (this->isPrivileged() == false)
+            {
+                return MPU_STATE::MPU_OPERATION_NOT_ALLOWED
+            }
             __DMB();
             MPU->CTRL = (privilegedDefault ? 0 : MPU_CTRL_PRIVDEFENA_Msk) | MPU_CTRL_ENABLE_Msk;
             __DSB();
@@ -73,7 +77,10 @@ namespace codal
 
         static inline int disable()
         {
-            if (this->isPrivileged() == false) {return MPU_STATE::MPU_OPERATION_NOT_ALLOWED} 
+            if (this->isPrivileged() == false)
+            {
+                return MPU_STATE::MPU_OPERATION_NOT_ALLOWED
+            }
             MPU->CTRL = 0;
             __DSB();
             __ISB();
@@ -86,13 +93,17 @@ namespace codal
         }
 
         static inline int configureRegion(uint8_t regionNumber, uint32_t baseAddress, MPURegionSize size,
-                                           MPUAccessPermission access, bool executable = true,
-                                           bool shareable = false, bool cacheable = false, bool bufferable = false)
+                                          MPUAccessPermission access, bool executable = true,
+                                          bool shareable = false, bool cacheable = false, bool bufferable = false)
         {
-            if (access == MPUAccessPermission::RESERVED) {
+            if (access == MPUAccessPermission::RESERVED)
+            {
                 return MPU_STATE::MPU_UNKOWN_PERMISSON_ACCESS;
             }
-            if (this->isPrivileged() == false) {return MPU_STATE::MPU_OPERATION_NOT_ALLOWED}
+            if (this->isPrivileged() == false)
+            {
+                return MPU_STATE::MPU_OPERATION_NOT_ALLOWED
+            }
             MPU->RNR = regionNumber;
             MPU->RBAR = baseAddress & MPU_RBAR_ADDR_Msk;
 
@@ -112,7 +123,10 @@ namespace codal
 
         static inline int setSVCHandler(void (*handler)(void))
         {
-            if (this->isPrivileged() == false) {return MPU_STATE::MPU_OPERATION_NOT_ALLOWED}
+            if (this->isPrivileged() == false)
+            {
+                return MPU_STATE::MPU_OPERATION_NOT_ALLOWED
+            }
             constexpr uint32_t SVC_VECTOR_INDEX = 11; // SVC is exception #11
             uint32_t *vectorTable = reinterpret_cast<uint32_t *>(SCB->VTOR);
             vectorTable[SVC_VECTOR_INDEX] = reinterpret_cast<uint32_t>(handler);

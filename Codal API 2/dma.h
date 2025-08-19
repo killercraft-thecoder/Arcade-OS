@@ -3,7 +3,8 @@
 #include "PeripheralPins.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #define DMA_RX 1
@@ -23,7 +24,7 @@ extern "C" {
 
 #define DMA_FLAG_DEFAULT DMA_FLAG_PRI(2)
 
-int dma_init(uint32_t peripheral, uint8_t rxdx, DMA_HandleTypeDef *obj, int flags);
+    int dma_init(uint32_t peripheral, uint8_t rxdx, DMA_HandleTypeDef *obj, int flags);
 
 #ifdef __cplusplus
 }

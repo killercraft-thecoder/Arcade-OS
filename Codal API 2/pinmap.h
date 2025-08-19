@@ -54,8 +54,8 @@ extern "C"
 
 namespace codal
 {
-class Pin;
-uint32_t codal_setup_pin(Pin *p, uint32_t prev, const PinMap *map);
+    class Pin;
+    uint32_t codal_setup_pin(Pin *p, uint32_t prev, const PinMap *map);
 } // namespace codal
 
 #endif

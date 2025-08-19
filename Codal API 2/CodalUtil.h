@@ -23,16 +23,16 @@ DEALINGS IN THE SOFTWARE.
 */
 
 /**
-  * This file contains functions used to maintain compatability and portability.
-  * It also contains constants that are used elsewhere in the DAL.
-  */
+ * This file contains functions used to maintain compatability and portability.
+ * It also contains constants that are used elsewhere in the DAL.
+ */
 
 #ifndef CODAL_UTIL_H
 #define CODAL_UTIL_H
 
 #include "CodalConfig.h"
 
-#define CREATE_KEY_VALUE_TABLE(NAME, PAIRS) const KeyValueTable NAME { PAIRS, sizeof(PAIRS) / sizeof(KeyValueTableEntry) };
+#define CREATE_KEY_VALUE_TABLE(NAME, PAIRS) const KeyValueTable NAME{PAIRS, sizeof(PAIRS) / sizeof(KeyValueTableEntry)};
 
 namespace codal
 {
@@ -53,7 +53,7 @@ namespace codal
         const KeyValueTableEntry *data;
         const int length;
 
-        KeyValueTableEntry* find(const uint32_t key) const;
+        KeyValueTableEntry *find(const uint32_t key) const;
         uint32_t get(const uint32_t key) const;
         uint32_t getKey(const uint32_t key) const;
         bool hasKey(const uint32_t key) const;

@@ -153,7 +153,7 @@ public:
         this->comp = NULL;
         this->hasComp = false;
     }
- // rate is ms per tick , not hz.
+    // rate is ms per tick , not hz.
     Space3D(codal::Accelerometer &accelerometer, codal::Compass &comp, int rate = 25)
         : codal::CodalComponent(DEVICE_ID_SPACE3D), accel(accelerometer), sampleRate(rate)
     {
@@ -168,7 +168,7 @@ public:
         this->hasComp = true;
         this->comp.calibrate();
     }
- // rate is ms per tick , not hz.
+    // rate is ms per tick , not hz.
     Space3D(codal::Compass &comp, int rate = 25)
         : codal::CodalComponent(DEVICE_ID_SPACE3D), sampleRate(rate)
     {
@@ -213,8 +213,10 @@ public:
             this->vz = 0;
         }
     }
-    void setup() {
-        if (this->_id == nullptr) {
+    void setup()
+    {
+        if (this->_id == nullptr)
+        {
             // means its not initalized yet
             this->_id = 0;
         }
@@ -360,8 +362,10 @@ public:
         return &this->currentState;
     }
 
-    ~Space3D() {
-       delete this->accel;
-       if (this->hasComp) delete this->comp;
+    ~Space3D()
+    {
+        delete this->accel;
+        if (this->hasComp)
+            delete this->comp;
     }
 };

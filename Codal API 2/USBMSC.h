@@ -33,53 +33,53 @@ DEALINGS IN THE SOFTWARE.
 namespace codal
 {
 
-struct MSCState;
+    struct MSCState;
 
-class USBMSC : public CodalUSBInterface
-{
-    struct MSCState *state;
-    uint32_t blockAddr;
-    uint16_t blockCount;
-    bool failed;
-    bool listen;
-    bool disableIRQ;
+    class USBMSC : public CodalUSBInterface
+    {
+        struct MSCState *state;
+        uint32_t blockAddr;
+        uint16_t blockCount;
+        bool failed;
+        bool listen;
+        bool disableIRQ;
 
-    bool writePadded(const void *ptr, int dataSize, int allocSize = -1);
-    void writeHandler(Event);
-    void readHandler(Event);
+        bool writePadded(const void *ptr, int dataSize, int allocSize = -1);
+        void writeHandler(Event);
+        void readHandler(Event);
 
-    int handeSCSICommand();
-    int sendResponse(bool ok);
-    void fail();
+        int handeSCSICommand();
+        int sendResponse(bool ok);
+        void fail();
 
-    bool cmdInquiry();
-    bool cmdRequest_Sense();
-    bool cmdRead_Capacity_10();
-    bool cmdSend_Diagnostic();
-    void cmdReadWrite_10(bool isRead);
-    bool cmdModeSense(bool is10);
-    bool cmdReadFormatCapacity();
+        bool cmdInquiry();
+        bool cmdRequest_Sense();
+        bool cmdRead_Capacity_10();
+        bool cmdSend_Diagnostic();
+        void cmdReadWrite_10(bool isRead);
+        bool cmdModeSense(bool is10);
+        bool cmdReadFormatCapacity();
 
-public:
-    USBMSC();
-    virtual int endpointRequest();
-    virtual int classRequest(UsbEndpointIn &ctrl, USBSetup &setup);
-    virtual const InterfaceInfo *getInterfaceInfo();
+    public:
+        USBMSC();
+        virtual int endpointRequest();
+        virtual int classRequest(UsbEndpointIn &ctrl, USBSetup &setup);
+        virtual const InterfaceInfo *getInterfaceInfo();
 
-    virtual int totalLUNs() { return 1; }
-    virtual bool storageOK() { return true; }
-    virtual bool isReadOnly() { return false; }
-    virtual uint32_t getCapacity() { return 8 * 1024 * 2; } // 8M
+        virtual int totalLUNs() { return 1; }
+        virtual bool storageOK() { return true; }
+        virtual bool isReadOnly() { return false; }
+        virtual uint32_t getCapacity() { return 8 * 1024 * 2; } // 8M
 
-    void writeBulk(const void *ptr, int dataSize);
-    void readBulk(void *ptr, int dataSize);
-    void finishReadWrite();
-    int currLUN();
-    uint32_t cbwTag();
+        void writeBulk(const void *ptr, int dataSize);
+        void readBulk(void *ptr, int dataSize);
+        void finishReadWrite();
+        int currLUN();
+        uint32_t cbwTag();
 
-    virtual void readBlocks(int blockAddr, int numBlocks) = 0;
-    virtual void writeBlocks(int blockAddr, int numBlocks) = 0;
-};
+        virtual void readBlocks(int blockAddr, int numBlocks) = 0;
+        virtual void writeBlocks(int blockAddr, int numBlocks) = 0;
+    };
 }
 
 #endif

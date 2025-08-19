@@ -16,7 +16,7 @@ namespace codal
         W,
         RGBW,
         BGRW,
-        RGBWI //RGB + White + Infrared  , stored as RGBDW
+        RGBWI // RGB + White + Infrared  , stored as RGBDW
     };
 
     struct ColorData

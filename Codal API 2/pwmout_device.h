@@ -33,21 +33,24 @@
 #include "cmsis.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-typedef enum {
-    PWMOUT_ON_APB1 = 0,
-    PWMOUT_ON_APB2 = 1,
-    PWMOUT_UNKNOWN = 2
-} PwmoutApb;
+    typedef enum
+    {
+        PWMOUT_ON_APB1 = 0,
+        PWMOUT_ON_APB2 = 1,
+        PWMOUT_UNKNOWN = 2
+    } PwmoutApb;
 
-/*  Structure to describe Timers to APB */
-typedef struct pwm_apb_map {
-    uint32_t pwm;
-    PwmoutApb pwmoutApb;
-} pwm_apb_map_t;
+    /*  Structure to describe Timers to APB */
+    typedef struct pwm_apb_map
+    {
+        uint32_t pwm;
+        PwmoutApb pwmoutApb;
+    } pwm_apb_map_t;
 
-extern const pwm_apb_map_t pwm_apb_map_table[];
+    extern const pwm_apb_map_t pwm_apb_map_table[];
 
 #endif

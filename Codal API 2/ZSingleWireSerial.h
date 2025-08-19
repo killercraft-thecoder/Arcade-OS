@@ -18,34 +18,33 @@ namespace codal
         DMA_HandleTypeDef hdma_tx;
         DMA_HandleTypeDef hdma_rx;
 
-        uint8_t* buf;
+        uint8_t *buf;
         uint16_t bufLen;
 
-        protected:
+    protected:
         virtual void configureRxInterrupt(int enable);
 
         virtual int configureTx(int);
 
         virtual int configureRx(int);
 
-        public:
-
+    public:
         static void _complete(uint32_t instance, uint32_t mode);
 
-        uint8_t* currentBuffer;
+        uint8_t *currentBuffer;
         uint32_t currentBufferIndex;
 
         // only works with a TX uart pin on STM.
-        ZSingleWireSerial(Pin& p);
+        ZSingleWireSerial(Pin &p);
 
         virtual int putc(char c);
         virtual int getc();
 
-        virtual int send(uint8_t* data, int len);
-        virtual int receive(uint8_t* data, int len);
+        virtual int send(uint8_t *data, int len);
+        virtual int receive(uint8_t *data, int len);
 
-        virtual int sendDMA(uint8_t* data, int len);
-        virtual int receiveDMA(uint8_t* data, int len);
+        virtual int sendDMA(uint8_t *data, int len);
+        virtual int receiveDMA(uint8_t *data, int len);
         virtual int abortDMA();
 
         virtual int getBytesReceived() override;

@@ -12,11 +12,12 @@
 #define PROCESSOR_WORD_TYPE uint32_t
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-void target_panic(int statusCode);
-void wait_us(uint32_t us);
+    void target_panic(int statusCode);
+    void wait_us(uint32_t us);
 
 #ifdef __cplusplus
 }
@@ -25,7 +26,7 @@ void wait_us(uint32_t us);
 #include "CodalConfig.h"
 
 #define MBED_ASSERT(cond) CODAL_ASSERT(cond, 8)
-#define MBED_ERROR(msg) CODAL_ASSERT(0,0)
+#define MBED_ERROR(msg) CODAL_ASSERT(0, 0)
 #define MBED_WEAK __attribute__((weak))
 
 /** This IS Tweaked For the stm32 f4's FPU precision. */

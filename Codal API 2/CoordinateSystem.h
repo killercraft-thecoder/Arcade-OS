@@ -57,10 +57,10 @@ DEALINGS IN THE SOFTWARE.
  *
  */
 
-#define COORDINATE_SPACE_ROTATED_0      0
-#define COORDINATE_SPACE_ROTATED_90     1
-#define COORDINATE_SPACE_ROTATED_180    2
-#define COORDINATE_SPACE_ROTATED_270    3
+#define COORDINATE_SPACE_ROTATED_0 0
+#define COORDINATE_SPACE_ROTATED_90 1
+#define COORDINATE_SPACE_ROTATED_180 2
+#define COORDINATE_SPACE_ROTATED_270 3
 
 namespace codal
 {
@@ -70,14 +70,14 @@ namespace codal
         SIMPLE_CARTESIAN,
         NORTH_EAST_DOWN,
         EAST_NORTH_UP,
-        NORTH_EAST_UP = EAST_NORTH_UP, // legacy name 
+        NORTH_EAST_UP = EAST_NORTH_UP, // legacy name
     };
 
     struct Sample3D
     {
-        int         x;
-        int         y;
-        int         z;
+        int x;
+        int y;
+        int z;
 
         Sample3D()
         {
@@ -93,7 +93,7 @@ namespace codal
             this->z = z;
         }
 
-        Sample3D operator-(const Sample3D& other) const
+        Sample3D operator-(const Sample3D &other) const
         {
             Sample3D result;
 
@@ -104,7 +104,7 @@ namespace codal
             return result;
         }
 
-        Sample3D operator+(const Sample3D& other) const
+        Sample3D operator+(const Sample3D &other) const
         {
             Sample3D result;
 
@@ -115,12 +115,12 @@ namespace codal
             return result;
         }
 
-        bool operator==(const Sample3D& other) const
+        bool operator==(const Sample3D &other) const
         {
             return x == other.x && y == other.y && z == other.z;
         }
 
-        bool operator!=(const Sample3D& other) const
+        bool operator!=(const Sample3D &other) const
         {
             return !(x == other.x && y == other.y && z == other.z);
         }
@@ -131,50 +131,46 @@ namespace codal
             float dy = y - s.y;
             float dz = z - s.z;
 
-            return (dx*dx) + (dy*dy) + (dz*dz);
+            return (dx * dx) + (dy * dy) + (dz * dz);
         }
-
     };
-
 
     class CoordinateSpace
     {
-        public:
+    public:
+        CoordinateSystem system;
+        bool upsidedown;
+        int rotated;
 
-            CoordinateSystem    system;
-            bool                upsidedown;
-            int                 rotated;
+        /**
+         * Constructor.
+         *
+         * Creates a new coordinatespace transformation object.
+         *
+         * @param system the CoordinateSystem to generated as output.
+         * @param upsidedown set if the sensor is mounted inverted (upside down) on the device board.
+         * @param rotated defines the rotation of the sensor on the PCB, with respect to pin 1 being at the top left corner
+         * when viewing the device from its "natural" (user defined) orientation. n.b. if the sensor is upside down, the rotation
+         * should be defined w.r.t. lookign at the side of the device where the sensor is mounted.
+         */
+        CoordinateSpace(CoordinateSystem system, bool upsidedown = false, int rotated = COORDINATE_SPACE_ROTATED_0);
 
-            /**
-             * Constructor.
-             *
-             * Creates a new coordinatespace transformation object.
-             *
-             * @param system the CoordinateSystem to generated as output.
-             * @param upsidedown set if the sensor is mounted inverted (upside down) on the device board.
-             * @param rotated defines the rotation of the sensor on the PCB, with respect to pin 1 being at the top left corner
-             * when viewing the device from its "natural" (user defined) orientation. n.b. if the sensor is upside down, the rotation
-             * should be defined w.r.t. lookign at the side of the device where the sensor is mounted.
-             */
-            CoordinateSpace(CoordinateSystem system, bool upsidedown = false, int rotated = COORDINATE_SPACE_ROTATED_0);
+        /**
+         * Transforms a given 3D x,y,z tuple from ENU format into that format defined in this instance.
+         *
+         * @param a the sample point to convert, in ENU format.
+         * @return the equivalent location of 's' in the coordinate space specified in the constructor.
+         */
+        Sample3D transform(Sample3D s);
 
-            /**
-             * Transforms a given 3D x,y,z tuple from ENU format into that format defined in this instance.
-             *
-             * @param a the sample point to convert, in ENU format.
-             * @return the equivalent location of 's' in the coordinate space specified in the constructor.
-             */
-            Sample3D transform(Sample3D s);
-
-            /**
-             * Transforms a given 3D x,y,z tuple from ENU format into that format defined in this instance.
-             *
-             * @param a the sample point to convert, in ENU format.
-             * @param system The coordinate system to use in the result.
-             * @return the equivalent location of 's' in the coordinate space specified in the constructor, and coordinate system supplied.
-             */
-            Sample3D transform(Sample3D s, CoordinateSystem system);
-
+        /**
+         * Transforms a given 3D x,y,z tuple from ENU format into that format defined in this instance.
+         *
+         * @param a the sample point to convert, in ENU format.
+         * @param system The coordinate system to use in the result.
+         * @return the equivalent location of 's' in the coordinate space specified in the constructor, and coordinate system supplied.
+         */
+        Sample3D transform(Sample3D s, CoordinateSystem system);
     };
 }
 #endif

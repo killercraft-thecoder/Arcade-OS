@@ -66,5 +66,4 @@
 #define ADC_VREF 0xF1
 #define ADC_VBAT 0xF2
 
-
 #endif
