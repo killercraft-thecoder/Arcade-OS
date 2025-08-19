@@ -23,16 +23,16 @@ DEALINGS IN THE SOFTWARE.
 */
 
 /**
-  * Definitions for the Device system timer.
-  *
-  * This module provides:
-  *
-  * 1) a concept of global system time since power up
-  * 2) a simple periodic multiplexing API for the underlying mbed implementation.
-  *
-  * The latter is useful to avoid costs associated with multiple mbed Ticker instances
-  * in codal components, as each incurs a significant additional RAM overhead (circa 80 bytes).
-  */
+ * Definitions for the Device system timer.
+ *
+ * This module provides:
+ *
+ * 1) a concept of global system time since power up
+ * 2) a simple periodic multiplexing API for the underlying mbed implementation.
+ *
+ * The latter is useful to avoid costs associated with multiple mbed Ticker instances
+ * in codal components, as each incurs a significant additional RAM overhead (circa 80 bytes).
+ */
 
 #include "Timer.h"
 #include "Event.h"
@@ -48,7 +48,7 @@ using namespace codal;
 //
 // Default system wide timer, if created.
 //
-Timer* codal::system_timer = NULL;
+Timer *codal::system_timer = NULL;
 static uint32_t cycleScale = 0;
 
 void timer_callback(uint16_t chan)
@@ -65,7 +65,8 @@ void timer_callback(uint16_t chan)
 REAL_TIME_FUNC
 void Timer::triggerIn(CODAL_TIMESTAMP t)
 {
-    if (t < CODAL_TIMER_MINIMUM_PERIOD) t = CODAL_TIMER_MINIMUM_PERIOD;
+    if (t < CODAL_TIMER_MINIMUM_PERIOD)
+        t = CODAL_TIMER_MINIMUM_PERIOD;
     // Just in case, disable all IRQs
     target_disable_irq();
     timer.setCompare(this->ccEventChannel, timer.captureCounter() + t);
@@ -76,7 +77,7 @@ REAL_TIME_FUNC
 TimerEvent *Timer::getTimerEvent()
 {
     // Find the first unused slot, and assign it.
-    for (int i=0; i < eventListSize; i++)
+    for (int i = 0; i < eventListSize; i++)
     {
         if (timerEventList[i].id == 0)
             return &timerEventList[i];
@@ -96,18 +97,17 @@ void Timer::releaseTimerEvent(TimerEvent *event)
 /**
  * Constructor for a generic system clock interface.
  */
-Timer::Timer(LowLevelTimer& t, uint8_t ccPeriodChannel, uint8_t ccEventChannel) : timer(t)
+Timer::Timer(LowLevelTimer &t, uint8_t ccPeriodChannel, uint8_t ccEventChannel) : timer(t)
 {
     // Register ourselves as the defualt timer - most recent timer wins.
     system_timer = this;
-    
 
     this->ccPeriodChannel = ccPeriodChannel;
     this->ccEventChannel = ccEventChannel;
 
     // Create an empty event list of the default size.
     eventListSize = CODAL_TIMER_DEFAULT_EVENT_LIST_SIZE;
-    timerEventList = (TimerEvent *) malloc(sizeof(TimerEvent) * CODAL_TIMER_DEFAULT_EVENT_LIST_SIZE);
+    timerEventList = (TimerEvent *)malloc(sizeof(TimerEvent) * CODAL_TIMER_DEFAULT_EVENT_LIST_SIZE);
     memclr(timerEventList, sizeof(TimerEvent) * CODAL_TIMER_DEFAULT_EVENT_LIST_SIZE);
     nextTimerEvent = NULL;
 
@@ -170,7 +170,7 @@ int Timer::setEvent(CODAL_TIMESTAMP period, uint16_t id, uint16_t value, bool re
     if (evt == NULL)
         return DEVICE_NO_RESOURCES;
 
-    evt->set(getTimeUs() + period, repeat ? period: 0, id, value, flags);
+    evt->set(getTimeUs() + period, repeat ? period : 0, id, value, flags);
 
     target_disable_irq();
 
@@ -184,7 +184,6 @@ int Timer::setEvent(CODAL_TIMESTAMP period, uint16_t id, uint16_t value, bool re
 
     return DEVICE_OK;
 }
-
 
 /**
  * Cancels any events matching the given id and value.
@@ -206,7 +205,7 @@ int Timer::cancel(uint16_t id, uint16_t value)
         res = DEVICE_OK;
     }
     else
-        for (int i=0; i<eventListSize; i++)
+        for (int i = 0; i < eventListSize; i++)
         {
             if (timerEventList[i].id == id && timerEventList[i].value == value)
             {
@@ -234,7 +233,7 @@ int Timer::cancel(uint16_t id, uint16_t value)
  */
 int Timer::eventAfter(CODAL_TIMESTAMP period, uint16_t id, uint16_t value, uint32_t flags)
 {
-    return eventAfterUs(period*1000, id, value, flags);
+    return eventAfterUs(period * 1000, id, value, flags);
 }
 
 /**
@@ -269,7 +268,7 @@ int Timer::eventAfterUs(CODAL_TIMESTAMP period, uint16_t id, uint16_t value, uin
  */
 int Timer::eventEvery(CODAL_TIMESTAMP period, uint16_t id, uint16_t value, uint32_t flags)
 {
-    return eventEveryUs(period*1000, id, value, flags);
+    return eventEveryUs(period * 1000, id, value, flags);
 }
 
 /**
@@ -318,7 +317,8 @@ void Timer::sync()
     // the 64 bit division is ~150 cycles
     // this is called at least every few ms, and quite possibly much more often
     delta += elapsed;
-    while (delta >= 1000) {
+    while (delta >= 1000)
+    {
         currentTime++;
         delta -= 1000;
     }
@@ -341,7 +341,8 @@ void Timer::recomputeNextTimerEvent()
         e++;
     }
 
-    if (nextTimerEvent) {
+    if (nextTimerEvent)
+    {
         // this may possibly happen if a new timer event was added to the queue while
         // we were running - it might be already in the past
         triggerIn(max(nextTimerEvent->timestamp - currentTimeUs, CODAL_TIMER_MINIMUM_PERIOD));
@@ -366,7 +367,7 @@ void Timer::trigger(bool isFallback)
         eventsFired = 0;
         TimerEvent *e = timerEventList;
 
-        for (int i = 0; i<eventListSize; i++)
+        for (int i = 0; i < eventListSize; i++)
         {
             if (e->id != 0)
             {
@@ -374,8 +375,6 @@ void Timer::trigger(bool isFallback)
                 {
                     uint16_t id = e->id;
                     uint16_t value = e->value;
-
-
 
                     // Release before triggering event. Otherwise, an immediate event handler
                     // can cancel this event, another event might be put in its place
@@ -386,22 +385,22 @@ void Timer::trigger(bool isFallback)
                         e->timestamp += e->period;
 
                     // We need to trigger this event.
-    #if CONFIG_ENABLED(LIGHTWEIGHT_EVENTS)
+#if CONFIG_ENABLED(LIGHTWEIGHT_EVENTS)
                     Event evt(id, value, currentTime);
-    #else
+#else
                     Event evt(id, value, currentTimeUs);
-    #endif
+#endif
 
                     // TODO: Handle rollover case above...
                     eventsFired++;
                 }
-                else if ( e->flags & CODAL_TIMER_EVENT_FLAGS_WAKEUP && fiber_scheduler_get_deepsleep_pending() && e->timestamp < currentTimeUs + 100000)
+                else if (e->flags & CODAL_TIMER_EVENT_FLAGS_WAKEUP && fiber_scheduler_get_deepsleep_pending() && e->timestamp < currentTimeUs + 100000)
                 {
-    #if CONFIG_ENABLED(LIGHTWEIGHT_EVENTS)
+#if CONFIG_ENABLED(LIGHTWEIGHT_EVENTS)
                     Event evt(DEVICE_ID_NOTIFY, POWER_EVT_CANCEL_DEEPSLEEP, currentTime);
-    #else
+#else
                     Event evt(DEVICE_ID_NOTIFY, POWER_EVT_CANCEL_DEEPSLEEP, currentTimeUs);
-    #endif
+#endif
                 }
             }
             e++;
@@ -421,11 +420,11 @@ TimerEvent *Timer::deepSleepWakeUpEvent()
     TimerEvent *wakeUpEvent = NULL;
 
     TimerEvent *eNext = timerEventList + eventListSize;
-    for ( TimerEvent *e = timerEventList; e < eNext; e++)
+    for (TimerEvent *e = timerEventList; e < eNext; e++)
     {
-        if ( e->id != 0 && e->flags & CODAL_TIMER_EVENT_FLAGS_WAKEUP)
+        if (e->id != 0 && e->flags & CODAL_TIMER_EVENT_FLAGS_WAKEUP)
         {
-            if ( wakeUpEvent == NULL || (e->timestamp < wakeUpEvent->timestamp))
+            if (wakeUpEvent == NULL || (e->timestamp < wakeUpEvent->timestamp))
                 wakeUpEvent = e;
         }
     }
@@ -434,15 +433,15 @@ TimerEvent *Timer::deepSleepWakeUpEvent()
 }
 
 /**
-  * Determine the current time and the corresponding timer counter,
-  * to enable the caller to take over tracking time.
-  *
-  * @param counter reference to a variable to receive the current timer counter
-  *
-  * @return the current time since power on in microseconds
-  */
+ * Determine the current time and the corresponding timer counter,
+ * to enable the caller to take over tracking time.
+ *
+ * @param counter reference to a variable to receive the current timer counter
+ *
+ * @return the current time since power on in microseconds
+ */
 REAL_TIME_FUNC
-CODAL_TIMESTAMP Timer::deepSleepBegin( CODAL_TIMESTAMP &counter)
+CODAL_TIMESTAMP Timer::deepSleepBegin(CODAL_TIMESTAMP &counter)
 {
     // Need to disable all IRQs - for example if SPI IRQ is triggered during
     // sync(), it might call into getTimeUs(), which would call sync()
@@ -466,7 +465,8 @@ CODAL_TIMESTAMP Timer::deepSleepBegin( CODAL_TIMESTAMP &counter)
     // the 64 bit division is ~150 cycles
     // this is called at least every few ms, and quite possibly much more often
     delta += elapsed;
-    while (delta >= 1000) {
+    while (delta >= 1000)
+    {
         currentTime++;
         delta -= 1000;
     }
@@ -479,30 +479,30 @@ CODAL_TIMESTAMP Timer::deepSleepBegin( CODAL_TIMESTAMP &counter)
 }
 
 /**
-  * After taking over time tracking with system_timer_deepsleep_begin,
-  * hand back control by supplying a new timer counter value with
-  * corresponding elapsed time since taking over tracking.
-  *
-  * The counter and elapsed time may be zero if the time has been maintained
-  * meanwhile by calling system_timer_current_time_us().
-  * 
-  * Event timestamps are are shifted towards the present.
-  * "after" and "every" events that would have fired during deep sleep
-  * will fire once as if firing late, then "every" events will
-  * resume the same relative timings.
-  *
-  * @param counter the current timer counter.
-  * @param micros time elapsed since system_timer_deepsleep_begin
-  *
-  * @return DEVICE_OK or DEVICE_NOT_SUPPORTED if no timer has been registered.
-  */
+ * After taking over time tracking with system_timer_deepsleep_begin,
+ * hand back control by supplying a new timer counter value with
+ * corresponding elapsed time since taking over tracking.
+ *
+ * The counter and elapsed time may be zero if the time has been maintained
+ * meanwhile by calling system_timer_current_time_us().
+ *
+ * Event timestamps are are shifted towards the present.
+ * "after" and "every" events that would have fired during deep sleep
+ * will fire once as if firing late, then "every" events will
+ * resume the same relative timings.
+ *
+ * @param counter the current timer counter.
+ * @param micros time elapsed since system_timer_deepsleep_begin
+ *
+ * @return DEVICE_OK or DEVICE_NOT_SUPPORTED if no timer has been registered.
+ */
 REAL_TIME_FUNC
-void Timer::deepSleepEnd( CODAL_TIMESTAMP counter, CODAL_TIMESTAMP micros)
+void Timer::deepSleepEnd(CODAL_TIMESTAMP counter, CODAL_TIMESTAMP micros)
 {
     // On entry, the timer IRQ is disabled and must not be enabled
     target_disable_irq();
 
-    if ( micros > 0)
+    if (micros > 0)
     {
         currentTimeUs += micros;
 
@@ -512,15 +512,16 @@ void Timer::deepSleepEnd( CODAL_TIMESTAMP counter, CODAL_TIMESTAMP micros)
         currentTime += millis;
 
         delta += micros;
-        while (delta >= 1000) {
+        while (delta >= 1000)
+        {
             currentTime++;
             delta -= 1000;
         }
 
 #if CONFIG_ENABLED(CODAL_TIMER_32BIT)
-        sigma = (uint32_t) counter;
+        sigma = (uint32_t)counter;
 #else
-        sigma = (uint16_t) counter;
+        sigma = (uint16_t)counter;
 #endif
     }
 
@@ -533,22 +534,22 @@ void Timer::deepSleepEnd( CODAL_TIMESTAMP counter, CODAL_TIMESTAMP micros)
     CODAL_TIMESTAMP present = currentTimeUs + CODAL_TIMER_MINIMUM_PERIOD;
     nextTimerEvent = NULL;
     TimerEvent *eNext = timerEventList + eventListSize;
-    for ( TimerEvent *e = timerEventList; e < eNext; e++)
+    for (TimerEvent *e = timerEventList; e < eNext; e++)
     {
-        if ( e->id != 0)
+        if (e->id != 0)
         {
-            if ( e->period == 0)
+            if (e->period == 0)
             {
-                if ( e->timestamp < present)
-                  e->timestamp = present;
+                if (e->timestamp < present)
+                    e->timestamp = present;
             }
             else
             {
-                while ( e->timestamp + e->period < present)
-                  e->timestamp += e->period;
+                while (e->timestamp + e->period < present)
+                    e->timestamp += e->period;
             }
 
-            if ( nextTimerEvent == NULL || nextTimerEvent->timestamp > e->timestamp)
+            if (nextTimerEvent == NULL || nextTimerEvent->timestamp > e->timestamp)
                 nextTimerEvent = e;
         }
     }
@@ -558,7 +559,7 @@ void Timer::deepSleepEnd( CODAL_TIMESTAMP counter, CODAL_TIMESTAMP micros)
     timer.setCompare(ccPeriodChannel, counterNow + 10000000);
 
     if (nextTimerEvent)
-        timer.setCompare( ccEventChannel, counterNow + CODAL_TIMER_MINIMUM_PERIOD);
+        timer.setCompare(ccEventChannel, counterNow + CODAL_TIMER_MINIMUM_PERIOD);
 
     target_enable_irq();
 }
@@ -568,11 +569,11 @@ void Timer::deepSleepEnd( CODAL_TIMESTAMP counter, CODAL_TIMESTAMP micros)
  * @param timestamp reference to a variable to receive the time.
  * @return true if there is an event.
  */
-bool Timer::deepSleepWakeUpTime( CODAL_TIMESTAMP &timestamp)
+bool Timer::deepSleepWakeUpTime(CODAL_TIMESTAMP &timestamp)
 {
     TimerEvent *wakeUpEvent = deepSleepWakeUpEvent();
 
-    if ( wakeUpEvent == NULL)
+    if (wakeUpEvent == NULL)
         return false;
 
     timestamp = wakeUpEvent->timestamp;
@@ -586,111 +587,110 @@ Timer::~Timer()
 {
 }
 
-
 /*
  *
  * Convenience C API Interface that wraps this class, using the first compatible timer that is created
  *
  */
 /**
-  * Determines the time since the device was powered on.
-  *
-  * @return the current time since power on in milliseconds
-  */
+ * Determines the time since the device was powered on.
+ *
+ * @return the current time since power on in milliseconds
+ */
 CODAL_TIMESTAMP codal::system_timer_current_time()
 {
-    if(system_timer == NULL)
+    if (system_timer == NULL)
         return 0;
 
     return system_timer->getTime();
 }
 
 /**
-  * Determines the time since the device was powered on.
-  *
-  * @return the current time since power on in microseconds
-  */
+ * Determines the time since the device was powered on.
+ *
+ * @return the current time since power on in microseconds
+ */
 REAL_TIME_FUNC
 CODAL_TIMESTAMP codal::system_timer_current_time_us()
 {
-    if(system_timer == NULL)
+    if (system_timer == NULL)
         return 0;
 
     return system_timer->getTimeUs();
 }
 
 /**
-  * Configure an event to occur every period us.
-  *
-  * @param period the interval between events
-  *
-  * @param the value to fire against the current system_timer id.
-  *
-  * @param flags CODAL_TIMER_EVENT_FLAGS_WAKEUP for event to trigger deep sleep wake-up.
-  *
-  * @return DEVICE_OK or DEVICE_NOT_SUPPORTED if no timer has been registered.
-  */
+ * Configure an event to occur every period us.
+ *
+ * @param period the interval between events
+ *
+ * @param the value to fire against the current system_timer id.
+ *
+ * @param flags CODAL_TIMER_EVENT_FLAGS_WAKEUP for event to trigger deep sleep wake-up.
+ *
+ * @return DEVICE_OK or DEVICE_NOT_SUPPORTED if no timer has been registered.
+ */
 int codal::system_timer_event_every_us(CODAL_TIMESTAMP period, uint16_t id, uint16_t value, uint32_t flags)
 {
-    if(system_timer == NULL)
+    if (system_timer == NULL)
         return DEVICE_NOT_SUPPORTED;
 
     return system_timer->eventEveryUs(period, id, value, flags);
 }
 
 /**
-  * Configure an event to occur after period us.
-  *
-  * @param period the interval between events
-  *
-  * @param the value to fire against the current system_timer id.
-  *
-  * @param flags CODAL_TIMER_EVENT_FLAGS_WAKEUP for event to trigger deep sleep wake-up.
-  *
-  * @return DEVICE_OK or DEVICE_NOT_SUPPORTED if no timer has been registered.
-  */
+ * Configure an event to occur after period us.
+ *
+ * @param period the interval between events
+ *
+ * @param the value to fire against the current system_timer id.
+ *
+ * @param flags CODAL_TIMER_EVENT_FLAGS_WAKEUP for event to trigger deep sleep wake-up.
+ *
+ * @return DEVICE_OK or DEVICE_NOT_SUPPORTED if no timer has been registered.
+ */
 REAL_TIME_FUNC
 int codal::system_timer_event_after_us(CODAL_TIMESTAMP period, uint16_t id, uint16_t value, uint32_t flags)
 {
-    if(system_timer == NULL)
+    if (system_timer == NULL)
         return DEVICE_NOT_SUPPORTED;
 
     return system_timer->eventAfterUs(period, id, value, flags);
 }
 
 /**
-  * Configure an event to occur every period milliseconds.
-  *
-  * @param period the interval between events
-  *
-  * @param the value to fire against the current system_timer id.
-  *
-  * @param flags CODAL_TIMER_EVENT_FLAGS_WAKEUP for event to trigger deep sleep wake-up.
-  *
-  * @return DEVICE_OK or DEVICE_NOT_SUPPORTED if no timer has been registered.
-  */
+ * Configure an event to occur every period milliseconds.
+ *
+ * @param period the interval between events
+ *
+ * @param the value to fire against the current system_timer id.
+ *
+ * @param flags CODAL_TIMER_EVENT_FLAGS_WAKEUP for event to trigger deep sleep wake-up.
+ *
+ * @return DEVICE_OK or DEVICE_NOT_SUPPORTED if no timer has been registered.
+ */
 int codal::system_timer_event_every(CODAL_TIMESTAMP period, uint16_t id, uint16_t value, uint32_t flags)
 {
-    if(system_timer == NULL)
+    if (system_timer == NULL)
         return DEVICE_NOT_SUPPORTED;
 
     return system_timer->eventEvery(period, id, value, flags);
 }
 
 /**
-  * Configure an event to occur after period millseconds.
-  *
-  * @param period the interval between events
-  *
-  * @param the value to fire against the current system_timer id.
-  *
-  * @param flags CODAL_TIMER_EVENT_FLAGS_WAKEUP for event to trigger deep sleep wake-up.
-  *
-  * @return DEVICE_OK or DEVICE_NOT_SUPPORTED if no timer has been registered.
-  */
+ * Configure an event to occur after period millseconds.
+ *
+ * @param period the interval between events
+ *
+ * @param the value to fire against the current system_timer id.
+ *
+ * @param flags CODAL_TIMER_EVENT_FLAGS_WAKEUP for event to trigger deep sleep wake-up.
+ *
+ * @return DEVICE_OK or DEVICE_NOT_SUPPORTED if no timer has been registered.
+ */
 int codal::system_timer_event_after(CODAL_TIMESTAMP period, uint16_t id, uint16_t value, uint32_t flags)
 {
-    if(system_timer == NULL)
+    if (system_timer == NULL)
         return DEVICE_NOT_SUPPORTED;
 
     return system_timer->eventAfter(period, id, value, flags);
@@ -705,7 +705,7 @@ int codal::system_timer_event_after(CODAL_TIMESTAMP period, uint16_t id, uint16_
  */
 int codal::system_timer_cancel_event(uint16_t id, uint16_t value)
 {
-    if(system_timer == NULL)
+    if (system_timer == NULL)
         return DEVICE_NOT_SUPPORTED;
 
     return system_timer->cancel(id, value);
@@ -723,7 +723,7 @@ int codal::system_timer_cancel_event(uint16_t id, uint16_t value)
  */
 int codal::system_timer_calibrate_cycles()
 {
-    if(system_timer == NULL)
+    if (system_timer == NULL)
         return DEVICE_NOT_SUPPORTED;
 
     uint32_t start = system_timer->getTimeUs();
@@ -747,10 +747,10 @@ void codal::system_timer_wait_cycles(uint32_t cycles)
         ".syntax unified\n"
         "1:              \n"
         "   subs %0, #1   \n" // subtract 1 from %0 (n)
-        "   bne 1b       \n" // if result is not 0 jump to 1
-        : "+r" (cycles)           // '%0' is n variable with RW constraints
-        :                    // no input
-        :                    // no clobber
+        "   bne 1b       \n"  // if result is not 0 jump to 1
+        : "+r"(cycles)        // '%0' is n variable with RW constraints
+        :                     // no input
+        :                     // no clobber
     );
 }
 
@@ -767,15 +767,16 @@ void codal::system_timer_wait_cycles(uint32_t cycles)
 REAL_TIME_FUNC
 int codal::system_timer_wait_us(uint32_t period)
 {
-    if(system_timer == NULL)
+    if (system_timer == NULL)
         return DEVICE_NOT_SUPPORTED;
 
-    if(cycleScale)
+    if (cycleScale)
         system_timer_wait_cycles(period * cycleScale);
     else
     {
         CODAL_TIMESTAMP start = system_timer->getTimeUs();
-        while(system_timer->getTimeUs() < start + period);
+        while (system_timer->getTimeUs() < start + period)
+            ;
     }
 
     return DEVICE_OK;
@@ -796,19 +797,19 @@ int codal::system_timer_wait_ms(uint32_t period)
 }
 
 /**
-  * Called from power manager before deep sleep.
-  * @param counter reference to a variable to receive the current timer counter
-  *
-  * @return the current time since power on in microseconds
-  */
-CODAL_TIMESTAMP codal::system_timer_deepsleep_begin( CODAL_TIMESTAMP &counter)
+ * Called from power manager before deep sleep.
+ * @param counter reference to a variable to receive the current timer counter
+ *
+ * @return the current time since power on in microseconds
+ */
+CODAL_TIMESTAMP codal::system_timer_deepsleep_begin(CODAL_TIMESTAMP &counter)
 {
-    if(system_timer == NULL)
+    if (system_timer == NULL)
     {
         counter = 0;
         return 0;
     }
-    return system_timer->deepSleepBegin( counter);
+    return system_timer->deepSleepBegin(counter);
 }
 
 /**
@@ -818,12 +819,12 @@ CODAL_TIMESTAMP codal::system_timer_deepsleep_begin( CODAL_TIMESTAMP &counter)
  *
  * @return DEVICE_OK or DEVICE_NOT_SUPPORTED if no timer has been registered.
  */
-int codal::system_timer_deepsleep_end( CODAL_TIMESTAMP counter, CODAL_TIMESTAMP micros)
+int codal::system_timer_deepsleep_end(CODAL_TIMESTAMP counter, CODAL_TIMESTAMP micros)
 {
-    if(system_timer == NULL)
+    if (system_timer == NULL)
         return DEVICE_NOT_SUPPORTED;
 
-    system_timer->deepSleepEnd( counter, micros);
+    system_timer->deepSleepEnd(counter, micros);
     return DEVICE_OK;
 }
 
@@ -832,11 +833,10 @@ int codal::system_timer_deepsleep_end( CODAL_TIMESTAMP counter, CODAL_TIMESTAMP 
  * @param timestamp reference to a variable to receive the time.
  * @return true if there is an event.
  */
-bool codal::system_timer_deepsleep_wakeup_time( CODAL_TIMESTAMP &timestamp)
+bool codal::system_timer_deepsleep_wakeup_time(CODAL_TIMESTAMP &timestamp)
 {
-    if(system_timer == NULL)
+    if (system_timer == NULL)
         return false;
 
     return system_timer->deepSleepWakeUpTime(timestamp);
 }
-

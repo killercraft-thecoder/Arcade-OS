@@ -4,23 +4,22 @@
 #include "CodalConfig.h"
 
 #ifndef PI
-#define PI     3.14159265358979323846f
+#define PI 3.14159265358979323846f
 #endif
 
 #if defined(CODAL_ALLOWS_MORE_CONSTANTS)
 #ifndef E
-#define E      2.71828182845904523536f
+#define E 2.71828182845904523536f
 #endif
 
 #ifndef SQRT2
-#define SQRT2  1.41421356237309504880f
+#define SQRT2 1.41421356237309504880f
 #endif
 
 #ifndef PHI
-#define PHI    1.61803398874989484820f
+#define PHI 1.61803398874989484820f
 #endif
 #endif
-
 
 // Required for gcc 6+
 #undef min

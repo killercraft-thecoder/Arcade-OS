@@ -8,7 +8,8 @@ static int8_t irq_disabled;
 void target_enable_irq()
 {
     irq_disabled--;
-    if (irq_disabled <= 0) {
+    if (irq_disabled <= 0)
+    {
         irq_disabled = 0;
         __enable_irq();
     }
@@ -55,9 +56,11 @@ int target_random(int max)
     The 96-bit unique device identifier can also be read in single bytes/half-words/words in different ways and then be concatenated using a custom algorithm.
 */
 
-static uint64_t fnv_1a_64(const uint8_t *data, uint32_t len) {
+static uint64_t fnv_1a_64(const uint8_t *data, uint32_t len)
+{
     uint64_t res = 0xcbf29ce484222325;
-    while (len--) {
+    while (len--)
+    {
         res ^= *data++;
         res *= 0x100000001b3;
     }
@@ -83,13 +86,12 @@ void target_reset()
     NVIC_SystemReset();
 }
 
-extern "C" void assert_failed(uint8_t* file, uint32_t line)
+extern "C" void assert_failed(uint8_t *file, uint32_t line)
 {
     target_panic(920);
 }
 
-__attribute__((weak))
-void target_panic(int statusCode)
+__attribute__((weak)) void target_panic(int statusCode)
 {
     target_disable_irq();
 
