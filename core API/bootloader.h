@@ -38,7 +38,7 @@ static inline void jump_to_vector_table(uint32_t vector_base)
     // Sanity checks (optional in release)
     // - new_msp should be in SRAM range
     // - bit0 of new_pc must be 1 (Thumb)
-    // if ((new_pc & 1u) == 0) while(1) {}
+    if ((new_pc & 1u) == 0) while(1) {}
 
     __set_MSP(new_msp);
     reinterpret_cast<entry_t>(new_pc)();
