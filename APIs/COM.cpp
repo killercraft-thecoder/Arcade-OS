@@ -1,3 +1,4 @@
+#ifdef ALLOW_COM
 #include "COM.h"
 #include "SPI.cpp" // Only needed here for implementation
 
@@ -55,3 +56,4 @@ namespace COM
         }
     }
 }
+#endif

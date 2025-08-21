@@ -1,3 +1,4 @@
+#ifdef ALLOW_COM
 #ifndef COM_H
 #define COM_H
 
@@ -39,4 +40,5 @@ namespace COM
     void closeSPI(SPI_ spi);
 }
 
+#endif
 #endif
