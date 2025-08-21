@@ -1,3 +1,4 @@
+/*
 #include <stdint.h>
 #include <stdbool.h>
 #include "./declaration/threading.h"
@@ -106,3 +107,4 @@ static bool unblockThread(uint8_t id)
     threadPool[id].isBlocked = false;
     return true;
 }
+*/
