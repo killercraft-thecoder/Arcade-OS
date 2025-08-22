@@ -4,7 +4,10 @@
 
 namespace core {
 
-using entry_t = void (*)();
+using callable_t = void (*)();
+
+#define CALLABLE(addr) reinterpret_cast<callable_t>(addr)
+#define CALL(addr)     (reinterpret_cast<callable_t>(addr))()
 
 static inline void jump_to_vector_table(uint32_t vector_base)
 {
@@ -41,7 +44,7 @@ static inline void jump_to_vector_table(uint32_t vector_base)
     if ((new_pc & 1u) == 0) while(1) {}
 
     __set_MSP(new_msp);
-    reinterpret_cast<entry_t>(new_pc)();
+    reinterpret_cast<callable_t>(new_pc)();
 
     // no return
 }
