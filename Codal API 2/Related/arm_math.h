@@ -287,6 +287,8 @@
 #ifndef _ARM_MATH_H
 #define _ARM_MATH_H
 
+#define ARM_MATH_CM4 // not in the orignal just specifes.
+
 /* ignore some GCC warnings */
 #if defined(__GNUC__)
 #pragma GCC diagnostic push
