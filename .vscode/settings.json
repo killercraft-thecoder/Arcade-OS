@@ -66,7 +66,16 @@
         "pwmout_device.h": "c",
         "stm32f4xx_hal.h": "c",
         "stm32f4xx_ll_i2c.h": "c",
-        "core_cmsimd.h": "c"
+        "core_cmsimd.h": "c",
+        "*.in": "cpp",
+        "cerrno": "cpp",
+        "climits": "cpp",
+        "ios": "cpp",
+        "locale": "cpp",
+        "queue": "cpp",
+        "cinttypes": "cpp",
+        "cstdbool": "cpp",
+        "peripheralpins.h": "c"
     },
     "editor.formatOnSave": true
 }

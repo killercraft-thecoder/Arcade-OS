@@ -5,6 +5,17 @@
 #include <cstdint>
 #include <string>
 #include "platform_includes.h"
+#include "PIL.h"
+
+#define AOS_BOOL bool
+#define AOS_INT int32_t
+#define AOS_UINT uint32_t
+#ifndef AOS_VER
+#define AOS_VER 1.0
+#endif
+#define AOS_FLOAT64 double
+#define AOS_FLOAT32 float
+using AOS_FILE = File;
 
 typedef uint32_t uint;              // 32-bit unsigned integer
 typedef std::string string;         // Standard string type

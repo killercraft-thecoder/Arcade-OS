@@ -156,7 +156,7 @@ namespace PIL
     }
 
     // .bin File Management
-    bool WriteToBinFile(const std::string &filename, const std::vector<uint8_t> &data, uint32_t appID)
+    AOS_BOOL WriteToBinFile(const std::string &filename, const std::vector<uint8_t> &data, uint32_t appID)
     {
         return FML::WriteToBinFile(filename, data, appID);
     }
@@ -167,12 +167,12 @@ namespace PIL
     }
 
     // .cache File Management
-    bool CreateCacheFile(const std::string &filename, uint32_t appID)
+    AOS_BOOL CreateCacheFile(const std::string &filename, uint32_t appID)
     {
         return FML::CreateCacheFile(filename, appID);
     }
 
-    static bool WriteToCacheFile(const std::string &filename, const std::vector<uint8_t> &data, uint32_t appID)
+    static AOS_BOOL WriteToCacheFile(const std::string &filename, const std::vector<uint8_t> &data, uint32_t appID)
     {
         return FML::WriteToCacheFile(filename, data, appID);
     }
@@ -183,12 +183,12 @@ namespace PIL
     }
 
     // .config File Management
-    bool CreateConfigFile(const std::string &filename, uint32_t appID)
+    AOS_BOOL CreateConfigFile(const std::string &filename, uint32_t appID)
     {
         return FML::CreateConfigFile(filename, appID);
     }
 
-    static bool WriteToConfigFile(const std::string &filename, const std::string &data, uint32_t appID)
+    static AOS_BOOL WriteToConfigFile(const std::string &filename, const std::string &data, uint32_t appID)
     {
         return FML::WriteToConfigFile(filename, data, appID);
     }

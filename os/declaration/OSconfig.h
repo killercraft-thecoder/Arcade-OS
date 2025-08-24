@@ -5,6 +5,6 @@
 #define EXTERNAL_FLASH_SUPPORTED false
 #define TARGET_BOARD "F4"
 // You can adjust this value based on your system's memory size.
-#define OS_RAM_SIZE_KB 128 // Set to 96, 128, or 256 as needed
+#define OS_RAM_SIZE_KB 96 // Set to 96, 128, or 256 as needed
 
 #endif

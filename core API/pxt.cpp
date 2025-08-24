@@ -429,52 +429,11 @@ void variantNotSupported(const char *v) {
 }
 
 inline void exec_binary(unsigned *pc) {
-    target_panic(999); // not allowed.
     return;
-    // XXX re-enable once the calibration code is fixed and [editor/embedded.ts]
-    // properly prepends a call to [internal_main].
-    // ::touch_develop::internal_main();
-
-    // unique group for radio based on source hash
-    // ::touch_develop::micro_bit::radioDefaultGroup = programHash();
-
-    unsigned ver = *pc++;
-    checkStr(ver == 0x4210, ":( Bad runtime version");
-
-    bytecode = *((uint16_t **)pc++); // the actual bytecode is here
-
-    if (((uint32_t *)bytecode)[0] == 0x923B8E71) {
-        variantNotSupported((const char *)bytecode + 16);
-        return;
-    }
-
-    globals = (TValue *)app_alloc(sizeof(TValue) * getNumGlobals());
-    memset(globals, 0, sizeof(TValue) * getNumGlobals());
-
-    // can be any valid address, best in RAM for speed
-    globals[0] = (TValue)&globals;
-
-    // just compare the first word
-    // TODO
-    checkStr(((uint32_t *)bytecode)[0] == 0x923B8E70 && (unsigned)templateHash() == *pc,
-             ":( Failed partial flash");
-
-    uintptr_t startptr = (uintptr_t)bytecode;
-
-    startptr += 64; // header
-
-    initPerfCounters();
-
-    initRuntime();
-
-    runAction0((Action)startptr);
-
-    pxt::releaseFiber();
 }
 
 inline void start() {
-    target_panic(999); // not allowed.
-    //exec_binary((unsigned *)functionsAndBytecode);
+    return;
 }
 #endif
 

@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-
+#include "types.h"
 /**
  * the PIL (Program interface layer) for interacting with the OS
  */
@@ -32,7 +32,7 @@ namespace PIL
          * @param id The application ID associated with the file.
          * @param mode The access mode ("r" for read, "w" for write, or "w/r" for read/write).
          */
-        File(const char *name, uint32_t id, const char *mode) : fileName(name), appID(id), mode(mode) {}
+        File(const char *name, AOS_UINT id, const char *mode) : fileName(name), appID(id), mode(mode) {}
 
         /**
          * @brief Destroys the File object, ensuring cleanup.
@@ -51,7 +51,7 @@ namespace PIL
          *
          * @return true if the write operation was successful, false otherwise.
          */
-        bool write();
+        AOS_BOOL write();
 
         /**
          * @brief Retrieves the mode in which the file was opened.
@@ -79,7 +79,7 @@ namespace PIL
 
     private:
         const char *fileName; // Name of the file.
-        uint32_t appID;       // Application ID associated with the file.
+        AOS_UINT appID;       // Application ID associated with the file.
         const char *mode;     // File access mode.
     };
 
@@ -89,7 +89,7 @@ namespace PIL
      * @param size The amount of RAM to allocate (in bytes).
      * @return Pointer to the allocated memory, or nullptr if allocation failed.
      */
-    uint32_t *AllocateRAM(uint32_t size);
+    AOS_UINT *AllocateRAM(AOS_UINT size);
 
     /**
      * @brief Deallocates previously allocated RAM.
@@ -97,7 +97,7 @@ namespace PIL
      * @param pointer The memory block to free.
      * @return true if successful, false otherwise.
      */
-    bool DeallocateRAM(uint32_t *pointer);
+    AOS_BOOL DeallocateRAM(uint32_t *pointer);
 
     /**
      * @brief Triggers garbage collection to free unused memory.
@@ -113,7 +113,7 @@ namespace PIL
      * @param appID The application ID requesting the cache file.
      * @return true if caching was successful, false otherwise.
      */
-    bool CreateCacheFile(const std::string &filename, uint32_t appID);
+    AOS_BOOL CreateCacheFile(const std::string &filename, AOS_UINT appID);
 
     /**
      * @brief Creates a configuration file (.config) in the system.
@@ -122,7 +122,7 @@ namespace PIL
      * @param appID The application ID requesting the config file.
      * @return true if successful, false otherwise.
      */
-    bool CreateConfigFile(const std::string &filename, uint32_t appID);
+    AOS_BOOL CreateConfigFile(const std::string &filename, AOS_UINT appID);
 
     /**
      * @brief Lists all files associated with a given application ID.
@@ -130,7 +130,7 @@ namespace PIL
      * @param appID The application ID whose files should be listed.
      * @return A vector containing the names of all associated files.
      */
-    std::vector<std::string> ListFilesByAppID(uint32_t appID);
+    std::vector<std::string> ListFilesByAppID(AOS_UINT appID);
 
     /**
      * @brief Generates a new unique application ID.
@@ -155,7 +155,7 @@ namespace PIL
      * @param mode The mode for file operations: "r" (read), "w" (write), or "w/r" (read/write).
      * @return A `File` object representing the opened file.
      */
-    PIL::File open(const char *fileName, uint32_t appID, const char *mode);
+    PIL::File open(const char *fileName, AOS_UINT appID, const char *mode);
 
     /**
      * @brief Closes a file and ensures proper cleanup.
@@ -184,7 +184,7 @@ namespace PIL
      * @param taskFunction The function to register as a task.
      * @param visible Determines whether the task is visible or runs silently.
      */
-    void RegisterTask(std::function<void()> taskFunction, bool visible = true);
+    void RegisterTask(std::function<void()> taskFunction, AOS_BOOL visible = true);
 
     /**
      * @brief Clears all cached files from RAM.
