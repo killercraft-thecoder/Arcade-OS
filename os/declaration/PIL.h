@@ -33,6 +33,20 @@ namespace PIL
          * @param mode The access mode ("r" for read, "w" for write, or "w/r" for read/write).
          */
         File(const char *name, AOS_UINT id, const char *mode) : fileName(name), appID(id), mode(mode) {}
+        /**
+         * @brief Constructs a File object.
+         *
+         * @param name The name of the file.
+         * @param mode The access mode ("r" for read, "w" for write, or "w/r" for read/write).
+         * @note Works the Same sa the normal constructer but uses appID 0 (global).
+         */
+        File(const char *name, const char *mode) : fileName(name), appID(0), mode(mode) {}
+        /**
+         * @brief Creates a New File.
+         *
+         * @param name The name of the file.
+         */
+        File(const char *name,AOS_UINT id) : fileName(name),appID(id),mode("w/r") {}
 
         /**
          * @brief Destroys the File object, ensuring cleanup.

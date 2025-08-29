@@ -42,6 +42,21 @@ namespace PIL
             Files.push_back(this);
         }
 
+        File(const char *name, const char *mode) : fileName(name), appID(0), mode(mode) {
+            Files.push_back(this);
+        }
+
+        File(const char *name,AOS_UINT id) : fileName(name),appID(id),mode("w/r") {
+            Files.push_back(this);
+            if (endsWith(fileName,".txt")) {
+                CreateProtectedtxtFile(name,{0},sizeof(0),appID);
+            } else if (endsWith(fileName,".cache")) {
+                CreateCacheFile(name,{0},appID);
+            } else {
+                target_panic(1); // Seems Wrong , so panic.
+            }
+        }
+
         ~File()
         {
             // Remove this instance safely

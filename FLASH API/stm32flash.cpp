@@ -80,6 +80,7 @@ namespace codal
 
     int8 ZFlash::writeBytes(uintptr_t dst, const void *src, uint32_t len)
     {
+        if (is_bootloader_region(dst, len)) return DEVICE_FLASH_ERROR;
         LOG("WR flash at %p len=%d", (void *)dst, len);
 
         if ((dst & 3) || ((uintptr_t)src & 3) || (len & 3))
@@ -122,7 +123,7 @@ namespace codal
         return 0;
     }
 
-    bool is_bootloader_region(uintptr_t address, size_t size)
+    inline bool is_bootloader_region(uintptr_t address, size_t size)
     {
         // Protect 0x0000–0x2000 (8KB)
         return (address < 0x2000) || (address + size > 0x0000 && address + size <= 0x2000);

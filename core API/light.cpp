@@ -12,8 +12,6 @@
 #define BIT_EXPANSION 3
 #define SPI_FREQ 2400000 // yeeee , it defines SPI_FREQ!!!
 
-
-// are you serioes , neopixel.h!! one of those annoying MISSING files. , also i did some preprocesisng stuff , as in i removed the propcressing things to simplify
 #include "neopixel.h"
 #define BITBANG_SUPPORTED 1 // BITBANG sounds like a thing that you bang bits (well the name is not litreal of course.)
 
