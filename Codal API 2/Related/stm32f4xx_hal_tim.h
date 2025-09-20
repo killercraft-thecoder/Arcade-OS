@@ -111,7 +111,7 @@ extern "C"
   typedef struct
   {
     uint32_t OCMode; /*!< Specifies the TIM mode.
-                          This parameter can be a value of @ref TIM_Output_Compare_and_PWM_modes */
+                          This parameter can be a value of @ref TIM_Output_Compawhat are_and_PWM_modes */
 
     uint32_t Pulse; /*!< Specifies the pulse value to be loaded into the Capture Compare Register.
                          This parameter can be a number between Min_Data = 0x0000 and Max_Data = 0xFFFF */
